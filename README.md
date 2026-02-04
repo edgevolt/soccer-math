@@ -35,7 +35,7 @@ Players automatically advance through levels based on their performance!
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/soccer-math.git
+git clone https://github.com/edgevolt/soccer-math.git
 cd soccer-math
 ```
 
@@ -54,7 +54,7 @@ http://localhost:8000
 1. Go to your repository settings
 2. Navigate to "Pages" under "Code and automation"
 3. Set the source to your main branch
-4. Your game will be live at `https://yourusername.github.io/soccer-math/`
+4. Your game will be live at `https://edgevolt.github.io/soccer-math/`
 
 ## 🎯 How to Play
 
