@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description"
+        content="Soccer Math - A fun math game for 4th graders. Score goals by solving math problems!">
+    <meta name="theme-color" content="#1a472a">
+    <title>Soccer Math</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="stadium-lights"></div>
+    <div class="crowd-noise"></div>
+
+    <main class="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <div class="logo">
+                <span class="ball-icon">⚽</span>
+                <h1>Soccer Math</h1>
+                <span class="ball-icon">⚽</span>
+            </div>
+            <p class="tagline">Score goals with math!</p>
+
+            <div class="high-score-display">
+                <span class="trophy">🏆</span>
+                <span>Best Score: <strong id="high-score-value">0</strong></span>
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="mode-selection">
+                <div class="mode-group">
+                    <label class="mode-label">Operation</label>
+                    <div class="toggle-buttons" id="operation-toggle">
+                        <button class="toggle-btn active" data-value="multiplication">× Multiply</button>
+                        <button class="toggle-btn" data-value="division">÷ Divide</button>
+                    </div>
+                </div>
+
+                <div class="mode-group">
+                    <label class="mode-label">Starting Level</label>
+                    <div class="toggle-buttons triple" id="level-toggle">
+                        <button class="toggle-btn active" data-value="1">Level 1</button>
+                        <button class="toggle-btn" data-value="2">Level 2</button>
+                        <button class="toggle-btn" data-value="3">Level 3</button>
+                    </div>
+                    <span class="level-hint" id="level-hint">×1, ×2, ×5, ×10</span>
+                </div>
+
+                <div class="mode-group">
+                    <label class="mode-label">Game Mode</label>
+                    <div class="toggle-buttons" id="game-mode-toggle">
+                        <button class="toggle-btn" data-value="practice">🎯 Practice</button>
+                        <button class="toggle-btn active" data-value="tournament">🏆 Tournament</button>
+                    </div>
+                    <span class="mode-hint" id="game-mode-hint">Type answers • 10 minutes</span>
+                </div>
+            </div>
+
+            <button id="start-btn" class="btn btn-primary">
+                <span class="btn-icon">▶</span>
+                Kick Off!
+            </button>
+
+            <div class="instructions">
+                <h3>How to Play</h3>
+                <ul>
+                    <li>Solve math problems</li>
+                    <li>Each correct answer = 1 Goal!</li>
+                    <li>Score as many goals in 90 seconds</li>
+                    <li>Build streaks for bonus points!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <!-- Scoreboard -->
+            <div class="scoreboard">
+                <div class="score-section">
+                    <span class="label">GOALS</span>
+                    <span id="score" class="value">0</span>
+                </div>
+                <div class="timer-section" id="timer-section">
+                    <span id="timer" class="timer-value">1:30</span>
+                </div>
+                <button id="done-btn" class="done-btn" style="display: none;">
+                    ✓ Done
+                </button>
+                <div class="streak-section">
+                    <span class="label">STREAK</span>
+                    <span id="streak" class="value">0</span>
+                    <span class="streak-fire" id="streak-fire">🔥</span>
+                </div>
+            </div>
+
+            <!-- Level Indicator -->
+            <div class="level-indicator">
+                <span id="level-text">Level 1</span>
+                <div class="level-dots">
+                    <span class="dot active" id="dot-1"></span>
+                    <span class="dot" id="dot-2"></span>
+                    <span class="dot" id="dot-3"></span>
+                </div>
+            </div>
+
+            <!-- Goal Net Area -->
+            <div class="goal-area">
+                <div class="goal-net">
+                    <div class="net-pattern"></div>
+                    <div class="goal-post left"></div>
+                    <div class="goal-post right"></div>
+                    <div class="crossbar"></div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="question-card" id="question-card">
+                    <div class="question-content">
+                        <span id="num1" class="number">7</span>
+                        <span id="operator" class="operator">×</span>
+                        <span id="num2" class="number">8</span>
+                        <span class="equals">=</span>
+                        <span class="question-mark">?</span>
+                    </div>
+                </div>
+
+                <!-- Ball Animation -->
+                <div class="ball" id="ball">⚽</div>
+            </div>
+
+            <!-- Answer Choices (Multiple Choice Mode) -->
+            <div class="answers-grid" id="answers-grid">
+                <button class="answer-btn" data-index="0">56</button>
+                <button class="answer-btn" data-index="1">54</button>
+                <button class="answer-btn" data-index="2">48</button>
+                <button class="answer-btn" data-index="3">63</button>
+            </div>
+
+            <!-- Typing Input (Typing Mode) -->
+            <div class="typing-area" id="typing-area" style="display: none;">
+                <input type="number" id="answer-input" class="answer-input" placeholder="?" inputmode="numeric"
+                    pattern="[0-9]*" autocomplete="off">
+                <button id="submit-answer-btn" class="btn btn-primary submit-btn">
+                    <span class="btn-icon">⚽</span>
+                    Kick!
+                </button>
+            </div>
+
+            <!-- Feedback Messages -->
+            <div class="feedback" id="feedback">
+                <span class="feedback-text"></span>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen">
+            <div class="final-whistle">
+                <span class="whistle-icon">📣</span>
+                <h2>Final Whistle!</h2>
+            </div>
+
+            <div class="final-stats">
+                <div class="stat-card goals-scored">
+                    <span class="stat-icon">⚽</span>
+                    <span class="stat-label">Goals Scored</span>
+                    <span id="final-score" class="stat-value">0</span>
+                </div>
+
+                <div class="stat-card best-streak">
+                    <span class="stat-icon">🔥</span>
+                    <span class="stat-label">Best Streak</span>
+                    <span id="final-streak" class="stat-value">0</span>
+                </div>
+
+                <div class="stat-card accuracy">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-label">Accuracy</span>
+                    <span id="final-accuracy" class="stat-value">0%</span>
+                </div>
+            </div>
+
+            <div class="new-record" id="new-record">
+                <span>🏆 NEW RECORD! 🏆</span>
+            </div>
+
+            <div class="game-over-actions">
+                <button id="play-again-btn" class="btn btn-primary">
+                    <span class="btn-icon">🔄</span>
+                    Play Again
+                </button>
+                <button id="home-btn" class="btn btn-secondary">
+                    <span class="btn-icon">🏠</span>
+                    Home
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="game.js"></script>
+</body>
+
+</html>
