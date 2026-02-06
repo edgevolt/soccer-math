@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3.10">
 </head>
 
 <body>
@@ -44,38 +44,28 @@
                 </div>
 
                 <div class="mode-group">
-                    <label class="mode-label">Starting Level</label>
-                    <div class="toggle-buttons triple" id="level-toggle">
-                        <button class="toggle-btn active" data-value="1">Level 1</button>
-                        <button class="toggle-btn" data-value="2">Level 2</button>
-                        <button class="toggle-btn" data-value="3">Level 3</button>
-                    </div>
-                    <span class="level-hint" id="level-hint">×1, ×2, ×5, ×10</span>
-                </div>
-
-                <div class="mode-group">
                     <label class="mode-label">Game Mode</label>
                     <div class="toggle-buttons" id="game-mode-toggle">
-                        <button class="toggle-btn" data-value="practice">🎯 Practice</button>
-                        <button class="toggle-btn active" data-value="tournament">🏆 Tournament</button>
+                        <button class="toggle-btn active" data-value="practice">🎯 Practice</button>
+                        <button class="toggle-btn" data-value="tournament">🏆 Tournament</button>
                     </div>
                     <span class="mode-hint" id="game-mode-hint">Type answers • 10 minutes</span>
                 </div>
             </div>
 
-            <button id="start-btn" class="btn btn-primary">
-                <span class="btn-icon">▶</span>
-                Kick Off!
-            </button>
-
-            <div class="instructions">
-                <h3>How to Play</h3>
-                <ul>
-                    <li>Solve math problems</li>
-                    <li>Each correct answer = 1 Goal!</li>
-                    <li>Score as many goals in 90 seconds</li>
-                    <li>Build streaks for bonus points!</li>
-                </ul>
+            <div class="start-actions">
+                <button id="start-btn" class="btn btn-primary">
+                    <span class="btn-icon">▶</span>
+                    Kick Off!
+                </button>
+                <button id="view-cards-btn" class="btn btn-secondary">
+                    <span class="btn-icon">🎴</span>
+                    My Cards
+                </button>
+                <button id="start-settings-btn" class="btn btn-secondary">
+                    <span class="btn-icon">⚙️</span>
+                    Settings
+                </button>
             </div>
         </div>
 
@@ -89,6 +79,11 @@
                 </div>
                 <div class="timer-section" id="timer-section">
                     <span id="timer" class="timer-value">1:30</span>
+                </div>
+                <!-- Small Quit Button in Header -->
+                <div class="header-controls">
+                    <button id="settings-btn" class="icon-btn" aria-label="Settings">⚙️</button>
+                    <button id="quit-btn" class="icon-btn" aria-label="Quit Game" style="display: none;">✕</button>
                 </div>
                 <button id="done-btn" class="done-btn" style="display: none;">
                     ✓ Done
@@ -107,6 +102,60 @@
                     <span class="dot active" id="dot-1"></span>
                     <span class="dot" id="dot-2"></span>
                     <span class="dot" id="dot-3"></span>
+                </div>
+            </div>
+
+            <!-- Level Up Celebration -->
+            <div class="level-up-celebration" id="level-up-celebration">
+                <div class="level-up-content">
+                    <span class="level-up-emoji">🎉</span>
+                    <span class="level-up-text" id="level-up-text">LEVEL UP!</span>
+                    <span class="level-up-emoji">⭐</span>
+                </div>
+            </div>
+
+            <!-- Quit Confirmation Modal -->
+            <div class="modal-overlay" id="quit-modal">
+                <div class="modal-content">
+                    <h3>Quit Tournament?</h3>
+                    <p>You will lose any cards found in this game!</p>
+                    <div class="modal-actions">
+                        <button id="cancel-quit-btn" class="btn btn-secondary">Cancel</button>
+                        <button id="confirm-quit-btn" class="btn btn-danger">Quit Game</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lucky Block Reward -->
+            <div class="lucky-block-overlay" id="lucky-block-overlay">
+                <div class="lucky-block-container">
+                    <div class="lucky-block" id="lucky-block">
+                        <span class="block-icon">🎁</span>
+                    </div>
+                    <div class="card-reveal" id="card-reveal">
+                        <div class="card-emoji" id="card-emoji"></div>
+                        <div class="card-name" id="card-name"></div>
+                        <div class="card-rarity" id="card-rarity"></div>
+                        <div class="card-stats-grid" id="card-stats"></div>
+                        <div class="tap-continue">Tap to continue</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Bonus Wheel Overlay -->
+            <div class="streak-wheel-overlay" id="streak-wheel-overlay">
+                <div class="streak-wheel-container">
+                    <h2 class="wheel-title">🔥 STREAK BONUS! 🔥</h2>
+                    <p class="wheel-subtitle">Spin for a rare card!</p>
+
+                    <div class="wheel-wrapper">
+                        <div class="wheel-pointer">▼</div>
+                        <div class="wheel" id="bonus-wheel"></div>
+                    </div>
+
+                    <div class="wheel-result" id="wheel-result">
+                        <!-- Card will be shown here after spin -->
+                    </div>
                 </div>
             </div>
 
@@ -152,9 +201,48 @@
                 </button>
             </div>
 
+            <!-- On-Screen Number Pad (Mobile) -->
+            <div class="number-pad" id="number-pad" style="display: none;">
+                <button class="num-btn" data-value="7">7</button>
+                <button class="num-btn" data-value="8">8</button>
+                <button class="num-btn" data-value="9">9</button>
+                <button class="num-btn" data-value="4">4</button>
+                <button class="num-btn" data-value="5">5</button>
+                <button class="num-btn" data-value="6">6</button>
+                <button class="num-btn" data-value="1">1</button>
+                <button class="num-btn" data-value="2">2</button>
+                <button class="num-btn" data-value="3">3</button>
+                <button class="num-btn backspace" data-value="backspace">⌫</button>
+                <button class="num-btn" data-value="0">0</button>
+                <button class="num-btn clear" data-value="clear">C</button>
+            </div>
+
             <!-- Feedback Messages -->
             <div class="feedback" id="feedback">
                 <span class="feedback-text"></span>
+            </div>
+        </div>
+
+        <!-- My Cards Gallery Screen -->
+        <div id="gallery-screen" class="screen">
+            <div class="gallery-header">
+                <h2>My Card Collection</h2>
+                <button id="gallery-home-btn" class="btn btn-secondary">Home</button>
+            </div>
+
+            <div class="gallery-stats">
+                <div class="gallery-stat">
+                    <span class="label">Total Cards</span>
+                    <span id="total-cards-count" class="value">0</span>
+                </div>
+                <div class="gallery-stat">
+                    <span class="label">Unique</span>
+                    <span id="unique-cards-count" class="value">0</span>
+                </div>
+            </div>
+
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Cards dynamically added here -->
             </div>
         </div>
 
@@ -189,6 +277,14 @@
                 <span>🏆 NEW RECORD! 🏆</span>
             </div>
 
+            <!-- My Cards Section -->
+            <div class="my-cards-section" id="my-cards-section">
+                <h3 class="my-cards-title">🎴 My Cards</h3>
+                <div class="my-cards-grid" id="my-cards-grid">
+                    <!-- Cards will be dynamically inserted here -->
+                </div>
+            </div>
+
             <div class="game-over-actions">
                 <button id="play-again-btn" class="btn btn-primary">
                     <span class="btn-icon">🔄</span>
@@ -202,7 +298,38 @@
         </div>
     </main>
 
-    <script src="game.js"></script>
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <h2>Settings</h2>
+
+            <div class="setting-group">
+                <label for="timer-select">Tournament Timer:</label>
+                <select id="timer-select">
+                    <option value="60">1 Minute</option>
+                    <option value="180">3 Minutes</option>
+                    <option value="300">5 Minutes</option>
+                    <option value="600" selected>10 Minutes</option>
+                    <option value="1200">20 Minutes</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label for="level-select">Starting Level:</label>
+                <select id="level-select">
+                    <option value="1" selected>Level 1 (×1, ×2, ×5, ×10)</option>
+                    <option value="2">Level 2 (×3, ×4, ×6)</option>
+                    <option value="3">Level 3 (×7, ×8, ×9, ×11, ×12)</option>
+                </select>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="save-settings-btn" class="btn primary-btn">Save & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js?v=3.22"></script>
 </body>
 
 </html>
