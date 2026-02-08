@@ -865,10 +865,11 @@ function initMusic() {
     // Set initial button state
     updateMusicButtonState();
 
-    // Add click listener
-    if (elements.globalMusicBtn) {
-        elements.globalMusicBtn.addEventListener('click', toggleMusic);
-    }
+    // Add click listeners to all music toggle buttons
+    const musicBtns = document.querySelectorAll('.music-toggle-btn');
+    musicBtns.forEach(btn => {
+        btn.addEventListener('click', toggleMusic);
+    });
 }
 
 function toggleMusic() {
@@ -887,19 +888,19 @@ function toggleMusic() {
 }
 
 function updateMusicButtonState() {
-    if (!elements.globalMusicBtn) return;
+    const musicBtns = document.querySelectorAll('.music-toggle-btn');
 
-    const icon = elements.globalMusicBtn.querySelector('.music-icon');
-
-    if (gameState.isMusicPlaying) {
-        elements.globalMusicBtn.classList.add('playing');
-        elements.globalMusicBtn.setAttribute('aria-label', 'Mute Music');
-        if (icon) icon.textContent = '🔊';
-    } else {
-        elements.globalMusicBtn.classList.remove('playing');
-        elements.globalMusicBtn.setAttribute('aria-label', 'Enable Music');
-        if (icon) icon.textContent = '🔇';
-    }
+    musicBtns.forEach(btn => {
+        if (gameState.isMusicPlaying) {
+            btn.classList.add('playing');
+            btn.setAttribute('aria-label', 'Mute Music');
+            btn.textContent = '🔊';
+        } else {
+            btn.classList.remove('playing');
+            btn.setAttribute('aria-label', 'Enable Music');
+            btn.textContent = '🔇';
+        }
+    });
 }
 
 function playMusic() {

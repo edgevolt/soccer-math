@@ -109,51 +109,16 @@ body::before {
     z-index: 0;
 }
 
-/* Global Music Button */
-.global-music-btn {
-    position: fixed;
-    bottom: 20px;
+/* Screen Header (Start Screen) */
+.screen-header {
+    position: absolute;
+    top: 20px;
     right: 20px;
-    top: auto;
-    /* Ensure top is unset */
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    color: var(--white);
+    width: auto;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 4000;
-    /* Highest z-index to stay on top of everything */
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    /* Safari support */
-}
-
-.global-music-btn:hover {
-    background: rgba(0, 0, 0, 0.6);
-    transform: scale(1.1);
-    border-color: var(--gold);
-}
-
-.global-music-btn:active {
-    transform: scale(0.95);
-}
-
-.global-music-btn .music-icon {
-    font-size: 1.2rem;
-    line-height: 1;
-}
-
-.global-music-btn.playing {
-    background: rgba(255, 215, 0, 0.2);
-    border-color: var(--gold);
-    color: var(--gold);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    gap: 12px;
+    justify-content: flex-end;
+    z-index: 10;
 }
 
 /* Game Container */

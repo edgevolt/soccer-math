@@ -23,14 +23,15 @@
         <source src="bgm-latin-coldise.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Global Music Toggle -->
-    <button id="global-music-btn" class="global-music-btn" aria-label="Toggle Music">
-        <span class="music-icon">🔇</span>
-    </button>
+
 
     <main class="game-container">
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
+            <div class="screen-header"
+                style="position: absolute; top: 10px; right: 10px; width: auto; display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="start-music-btn" class="icon-btn music-toggle-btn" aria-label="Toggle Music">🔇</button>
+            </div>
             <div class="logo">
                 <span class="ball-icon">⚽</span>
                 <h1>Soccer Math</h1>
@@ -92,6 +93,7 @@
                 </div>
                 <!-- Small Quit Button in Header -->
                 <div class="header-controls">
+                    <button id="game-music-btn" class="icon-btn music-toggle-btn" aria-label="Toggle Music">🔇</button>
                     <button id="settings-btn" class="icon-btn" aria-label="Settings">⚙️</button>
                     <button id="quit-btn" class="icon-btn" aria-label="Quit Game" style="display: none;">✕</button>
                 </div>
