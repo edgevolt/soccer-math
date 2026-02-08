@@ -109,6 +109,51 @@ body::before {
     z-index: 0;
 }
 
+/* Global Music Button */
+.global-music-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 4000;
+    /* Highest z-index to stay on top of everything */
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    /* Safari support */
+}
+
+.global-music-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: scale(1.1);
+    border-color: var(--gold);
+}
+
+.global-music-btn:active {
+    transform: scale(0.95);
+}
+
+.global-music-btn .music-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.global-music-btn.playing {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
 /* Game Container */
 .game-container {
     position: relative;
@@ -690,6 +735,39 @@ body::before {
     padding: 14px;
 }
 
+/* About Section */
+.about-section {
+    width: 100%;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+.about-section p {
+    margin: 4px 0;
+}
+
+.about-section .version {
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.about-section a {
+    color: var(--white);
+    text-decoration: underline;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.about-section a:hover {
+    opacity: 1;
+    text-decoration: none;
+    color: var(--gold);
+}
+
 .icon-btn {
     background: rgba(255, 255, 255, 0.1);
     border: none;
@@ -922,6 +1000,49 @@ body::before {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 
+/* Wheel segment labels */
+.wheel-label {
+    position: absolute;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    transform-origin: center center;
+}
+
+.wheel-label.legendary {
+    /* Center at 108deg */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(108deg) translate(0, -85px) rotate(-90deg);
+    right: auto;
+    /* Reset inherited styles */
+}
+
+/* Mythical segment: 216-306deg (25%) */
+.wheel-label.mythical {
+    /* Center at 261deg */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(261deg) translate(0, -85px) rotate(90deg);
+    bottom: auto;
+    /* Reset inherited styles */
+    right: auto;
+}
+
+/* Godly segment: 306-360deg (15%) */
+.wheel-label.godly {
+    /* Center at 333deg (-27deg) */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(333deg) translate(0, -85px) rotate(90deg);
+    left: 50%;
+    /* Ensure left is 50% */
+}
+
 .wheel {
     width: 280px;
     height: 280px;
@@ -930,9 +1051,9 @@ body::before {
     border: 6px solid var(--gold);
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
     background: conic-gradient(from 0deg,
-            #d38312 0deg 120deg,
-            #4a00e0 120deg 240deg,
-            #ff0000 240deg 360deg);
+            #d38312 0deg 216deg,
+            #4a00e0 216deg 306deg,
+            #ff0000 306deg 360deg);
 }
 
 .wheel.spinning {
@@ -1125,6 +1246,11 @@ body::before {
 
 .gallery-card .card-portrait-emoji {
     font-size: 3.5rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .card-name,
@@ -1291,6 +1417,14 @@ body::before {
     border: 3px solid #444;
     transition: transform 0.2s, box-shadow 0.2s;
     overflow: hidden;
+    min-height: 380px;
+    /* Ensure minimum height */
+    justify-content: flex-start;
+}
+
+.gallery-card .card-portrait {
+    flex-shrink: 0;
+    /* Prevent portrait from squashing */
 }
 
 .gallery-card:hover {
@@ -2137,6 +2271,8 @@ body::before {
 
 /* Screen visibility */
 @media (prefers-reduced-motion: reduce) {
+
+
 
     *,
     *::before,

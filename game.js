@@ -186,7 +186,8 @@ let gameState = {
     timeRemaining: 90,
     timerInterval: null,
     collectedCards: loadAndMergeCards(), // Load existing cards from storage
-    sessionStartIndex: 0 // Index in localStorage array where this session started
+    sessionStartIndex: 0, // Index in localStorage array where this session started
+    isMusicPlaying: false // Background music state
 };
 
 
@@ -284,7 +285,11 @@ const elements = {
     // Streak bonus wheel elements
     streakWheelOverlay: document.getElementById('streak-wheel-overlay'),
     bonusWheel: document.getElementById('bonus-wheel'),
-    wheelResult: document.getElementById('wheel-result')
+    wheelResult: document.getElementById('wheel-result'),
+
+    // Music elements
+    bgmAudio: document.getElementById('bgm-audio'),
+    globalMusicBtn: document.getElementById('global-music-btn')
 };
 
 // ========================================
@@ -528,7 +533,7 @@ function randomChoice(array) {
 // STREAK BONUS WHEEL
 // ========================================
 
-const STREAK_MILESTONES = [15, 25, 35, 45];
+const STREAK_BONUS_INTERVAL = 5;
 let lastBonusStreak = 0;
 
 /**
@@ -542,13 +547,11 @@ function checkStreakBonus() {
 
     const currentStreak = gameState.streak;
 
-    // Check if we've hit a new milestone
-    for (const milestone of STREAK_MILESTONES) {
-        if (currentStreak === milestone && lastBonusStreak < milestone) {
-            lastBonusStreak = milestone;
-            showStreakBonusWheel();
-            return true;
-        }
+    // Check if we've hit a new multiple of 5 (5, 10, 15, 20, ...)
+    if (currentStreak > 0 && currentStreak % STREAK_BONUS_INTERVAL === 0 && currentStreak > lastBonusStreak) {
+        lastBonusStreak = currentStreak;
+        showStreakBonusWheel();
+        return true;
     }
     return false;
 }
@@ -556,13 +559,17 @@ function checkStreakBonus() {
 /**
  * Show the streak bonus wheel
  */
+let isWheelReadyToSpin = false;
+
 function showStreakBonusWheel() {
     elements.streakWheelOverlay.classList.add('show');
+    isWheelReadyToSpin = true;
 
-    // Auto-spin after a brief delay
-    setTimeout(() => {
-        spinBonusWheel();
-    }, 1000);
+    // Update subtitle to prompt user
+    const subtitle = document.querySelector('.wheel-subtitle');
+    if (subtitle) {
+        subtitle.textContent = 'Tap the wheel to spin!';
+    }
 }
 
 /**
@@ -572,18 +579,34 @@ function spinBonusWheel() {
     // Determine which tier to award
     // Legendary: 60%, Mythical: 25%, Godly: 15%
     const tierRoll = Math.random();
-    let targetTier, targetRotation;
+    let targetTier, minAngle, maxAngle;
 
     if (tierRoll < 0.60) {
         targetTier = 'legendary';
-        targetRotation = 0; // Points to legendary segment
+        // Segment 0-216 deg. Center 108.
+        // To land at top (0deg), we need rotation R such that (angle + R) % 360 = 0
+        // So R = 360 - angle.
+        // Range: 360-216 to 360-0 => 144 to 360
+        minAngle = 10;
+        maxAngle = 206;
     } else if (tierRoll < 0.85) {
         targetTier = 'mythical';
-        targetRotation = 120; // Points to mythical segment
+        // Segment 216-306 deg.
+        minAngle = 226;
+        maxAngle = 296;
     } else {
         targetTier = 'godly';
-        targetRotation = 240; // Points to godly segment
+        // Segment 306-360 deg.
+        minAngle = 316;
+        maxAngle = 350;
     }
+
+    // Pick a random angle within the segment
+    const randomAngleInSegment = Math.floor(Math.random() * (maxAngle - minAngle + 1)) + minAngle;
+
+    // Calculate rotation needed to bring that angle to the top (0deg)
+    // The wheel rotates clockwise. If we want angle X to be at top, we rotate by (360 - X).
+    const targetRotation = 360 - randomAngleInSegment;
 
     // Add extra spins for excitement (3-5 full rotations + target)
     const extraSpins = 3 + Math.floor(Math.random() * 3);
@@ -719,6 +742,10 @@ function initModeToggles() {
             operationBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             gameState.operationType = btn.dataset.value;
+
+
+
+            updateGameModeHint();
             loadHighScore(); // Update high score for selected mode
         });
     });
@@ -730,8 +757,10 @@ function initModeToggles() {
             gameModeBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             gameState.gameMode = btn.dataset.value;
+
             // Set input mode based on game mode
             gameState.inputMode = btn.dataset.value === 'practice' ? 'choice' : 'typing';
+
             updateGameModeHint();
         });
     });
@@ -745,7 +774,7 @@ function updateGameModeHint() {
     if (gameState.gameMode === 'practice') {
         elements.gameModeHint.textContent = 'Multiple choice • No timer';
     } else {
-        elements.gameModeHint.textContent = 'Type answers • 10 minutes';
+        elements.gameModeHint.textContent = 'Type answers • Timed';
     }
 }
 
@@ -822,6 +851,74 @@ function getRandomMissedQuestion() {
         operator: match[2],
         num2: parseInt(match[3])
     };
+}
+
+// ========================================
+// MUSIC CONTROLS
+// ========================================
+
+function initMusic() {
+    // Always start muted to comply with browser autoplay policies
+    // and ensure UI matches reality (no sound without interaction)
+    gameState.isMusicPlaying = false;
+
+    // Set initial button state
+    updateMusicButtonState();
+
+    // Add click listener
+    if (elements.globalMusicBtn) {
+        elements.globalMusicBtn.addEventListener('click', toggleMusic);
+    }
+}
+
+function toggleMusic() {
+    gameState.isMusicPlaying = !gameState.isMusicPlaying;
+
+    // Save preference
+    localStorage.setItem('soccerMath_musicEnabled', gameState.isMusicPlaying);
+
+    updateMusicButtonState();
+
+    if (gameState.isMusicPlaying) {
+        playMusic();
+    } else {
+        pauseMusic();
+    }
+}
+
+function updateMusicButtonState() {
+    if (!elements.globalMusicBtn) return;
+
+    const icon = elements.globalMusicBtn.querySelector('.music-icon');
+
+    if (gameState.isMusicPlaying) {
+        elements.globalMusicBtn.classList.add('playing');
+        elements.globalMusicBtn.setAttribute('aria-label', 'Mute Music');
+        if (icon) icon.textContent = '🔊';
+    } else {
+        elements.globalMusicBtn.classList.remove('playing');
+        elements.globalMusicBtn.setAttribute('aria-label', 'Enable Music');
+        if (icon) icon.textContent = '🔇';
+    }
+}
+
+function playMusic() {
+    if (elements.bgmAudio) {
+        elements.bgmAudio.volume = 0.5; // Set volume to 50%
+        elements.bgmAudio.play().catch(e => {
+            console.log("Audio play failed (likely autoplay policy):", e);
+            // If play fails, we might want to reset state or just leave it
+            // User usually has to interact first. 
+            // Since we toggled via button click, it should work.
+            // On page load, it might fail.
+        });
+    }
+}
+
+function pauseMusic() {
+    if (elements.bgmAudio) {
+        elements.bgmAudio.pause();
+    }
 }
 
 // ========================================
@@ -942,6 +1039,8 @@ function generateMultiplicationQuestion() {
     };
 }
 
+
+
 /**
  * Generate a division question based on current level
  * Division is the inverse of multiplication to ensure whole number answers
@@ -988,10 +1087,15 @@ function generateQuestion() {
         if (operator === '×') {
             correctAnswer = num1 * num2;
             distractors = generateMultiplicationDistractors(correctAnswer, num1, num2);
-        } else {
+        } else if (operator === '÷') {
             correctAnswer = num1 / num2;
             distractors = generateDivisionDistractors(correctAnswer, num1, num2);
+        } else {
+            // Fallback
+            correctAnswer = 0;
+            distractors = [];
         }
+
 
         const answers = shuffleArray([correctAnswer, ...distractors]);
 
@@ -1161,21 +1265,14 @@ function handleAnswer(selectedIndex) {
     let willShowOverlay = false;
 
     if (isCorrect) {
-        const didLevelUp = handleCorrectAnswer(selectedIndex);
-
-        // Also check if we'll hit a streak bonus milestone at level 3
-        const isStreakBonus = gameState.gameMode === 'tournament' &&
-            gameState.currentLevel === 3 &&
-            STREAK_MILESTONES.includes(gameState.streak) &&
-            lastBonusStreak < gameState.streak;
-
-        willShowOverlay = didLevelUp || isStreakBonus;
+        const result = handleCorrectAnswer(selectedIndex);
+        willShowOverlay = result.didLevelUp || result.isStreakBonusShown;
     } else {
         handleIncorrectAnswer(selectedIndex, correctIndex);
     }
 
     // Show next question after delay (longer for incorrect so they can see the answer)
-    // BUT skip if level-up will show an overlay (it will handle next question)
+    // BUT skip if level-up or bonus will show an overlay (it will handle next question)
     if (!willShowOverlay) {
         const delay = isCorrect ? 800 : 2000;
         setTimeout(() => {
@@ -1198,8 +1295,11 @@ function handleTypedAnswer() {
     // Ignore empty submissions
     if (typedValue === '') return;
 
+    let isCorrect = false;
+
+    // Standard integer answer
     const typedAnswer = parseInt(typedValue, 10);
-    const isCorrect = typedAnswer === q.correctAnswer;
+    isCorrect = typedAnswer === q.correctAnswer;
 
     gameState.totalQuestions++;
 
@@ -1211,21 +1311,14 @@ function handleTypedAnswer() {
     let willShowOverlay = false;
 
     if (isCorrect) {
-        const didLevelUp = handleCorrectTypedAnswer();
-
-        // Also check if we'll hit a streak bonus milestone at level 3
-        const isStreakBonus = gameState.gameMode === 'tournament' &&
-            gameState.currentLevel === 3 &&
-            STREAK_MILESTONES.includes(gameState.streak) &&
-            lastBonusStreak < gameState.streak;
-
-        willShowOverlay = didLevelUp || isStreakBonus;
+        const result = handleCorrectTypedAnswer();
+        willShowOverlay = result.didLevelUp || result.isStreakBonusShown;
     } else {
         handleIncorrectTypedAnswer();
     }
 
     // Show next question after delay (longer for incorrect so they can see the answer)
-    // BUT skip if level-up will show an overlay (it will handle next question)
+    // BUT skip if level-up or bonus will show an overlay (it will handle next question)
     if (!willShowOverlay) {
         const delay = isCorrect ? 800 : 2000;
         setTimeout(() => {
@@ -1279,11 +1372,17 @@ function handleCorrectAnswer(buttonIndex) {
         : randomChoice(CONFIG.goalMessages);
     showFeedback(message, 'goal');
 
+    // Check for streak bonus milestones
+    checkStreakBonus();
+
     // Check for level up
     const didLevelUp = updateLevel();
 
-    // Return whether we leveled up so the caller knows not to auto-advance
-    return didLevelUp;
+    // Check if streak bonus overlay was shown
+    const isStreakBonusShown = elements.streakWheelOverlay.classList.contains('show');
+
+    // Return whether we showed an overlay so the caller knows not to auto-advance
+    return { didLevelUp, isStreakBonusShown };
 }
 
 /**
@@ -1336,8 +1435,12 @@ function handleCorrectTypedAnswer() {
     // Returns true if level-up in tournament mode (overlay will show)
     const didLevelUp = updateLevel();
 
-    // Return whether we leveled up so the caller knows not to auto-advance
-    return didLevelUp;
+    // Check if streak bonus overlay was shown
+    // We can check if the overlay class is active
+    const isStreakBonusShown = elements.streakWheelOverlay.classList.contains('show');
+
+    // Return whether we showed an overlay so the caller knows not to auto-advance
+    return { didLevelUp, isStreakBonusShown };
 }
 
 /**
@@ -1681,8 +1784,20 @@ function initEventListeners() {
     // Lucky block overlay - tap to close
     elements.luckyBlockOverlay.addEventListener('click', closeLuckyBlockOverlay);
 
-    // Streak bonus wheel overlay - tap to close
-    elements.streakWheelOverlay.addEventListener('click', closeStreakBonusWheel);
+    // Streak bonus wheel overlay - tap to spin or close
+    elements.streakWheelOverlay.addEventListener('click', () => {
+        if (isWheelReadyToSpin) {
+            isWheelReadyToSpin = false;
+            // Update subtitle
+            const subtitle = document.querySelector('.wheel-subtitle');
+            if (subtitle) {
+                subtitle.textContent = 'Spinning...';
+            }
+            spinBonusWheel();
+        } else {
+            closeStreakBonusWheel();
+        }
+    });
 
     // Game over buttons
     elements.playAgainBtn.addEventListener('click', startGame);
@@ -1698,6 +1813,7 @@ function initEventListeners() {
 // ========================================
 
 function init() {
+    initMusic();
     initModeToggles();
     loadHighScore();
     initEventListeners();

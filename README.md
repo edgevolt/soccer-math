@@ -24,6 +24,8 @@ Players automatically advance through levels based on their performance!
 - 🏆 **High Score Tracking**: Separate high scores for each mode and operation type
 - ⚽ **Soccer Theme**: Animated goal celebrations and stadium atmosphere
 - 📊 **Performance Stats**: Track accuracy, best streak, and total goals scored
+- 🎵 **Background Music**: Optional background tunes with global toggle
+- 🎡 **Streak Bonus Wheel**: Spin for rare cards every 5 correct answers (Tournament Mode, Level 3)
 
 ## 🚀 Getting Started
 
@@ -116,6 +118,10 @@ Contributions are welcome! Feel free to:
 - Report bugs
 - Suggest new features
 - Submit pull requests
+
+## 📜 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a history of changes and updates.
 
 ## 📄 License
 
