@@ -1449,6 +1449,7 @@ function handleCorrectTypedAnswer() {
  */
 function handleIncorrectAnswer(buttonIndex, correctIndex) {
     gameState.streak = 0;
+    lastBonusStreak = 0;
 
     // Add this question to the missed pool for reinforcement
     const q = gameState.currentQuestion;
@@ -1476,6 +1477,7 @@ function handleIncorrectAnswer(buttonIndex, correctIndex) {
  */
 function handleIncorrectTypedAnswer() {
     gameState.streak = 0;
+    lastBonusStreak = 0;
 
     // Add this question to the missed pool for reinforcement
     const q = gameState.currentQuestion;
