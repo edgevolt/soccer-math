@@ -2114,6 +2114,159 @@ body::before {
     }
 }
 
+/* ===========================================
+   LANDSCAPE ORIENTATION
+   Constrains game to viewport height so
+   nothing is clipped on wide, short screens.
+   =========================================== */
+@media (orientation: landscape) {
+
+    /* Lock the container to viewport height */
+    .game-container {
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        padding: 8px 20px 8px 20px;
+        overflow: hidden;
+    }
+
+    /* Start screen: allow scroll if content overflows */
+    #start-screen {
+        gap: 12px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #start-screen .logo h1 {
+        font-size: 2rem;
+    }
+
+    .start-actions {
+        gap: 10px;
+    }
+
+    .start-actions .btn {
+        min-height: 44px;
+        padding: 10px 24px;
+        font-size: 1rem;
+    }
+
+    /* Game screen: flex layout distributes space */
+    #game-screen {
+        gap: 4px;
+        padding-bottom: 2px;
+    }
+
+    .scoreboard {
+        padding: 6px 14px;
+    }
+
+    .scoreboard .value {
+        font-size: 1.4rem;
+    }
+
+    .timer-value {
+        font-size: 1.2rem;
+    }
+
+    .level-indicator {
+        gap: 6px;
+    }
+
+    #level-text {
+        font-size: 0.7rem;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    /* Goal area: allow flex shrinking, remove large min-height */
+    .goal-area {
+        min-height: 80px;
+        flex: 1 1 0;
+    }
+
+    .goal-net {
+        height: 80px;
+        margin-bottom: 6px;
+    }
+
+    .question-card {
+        padding: 8px 20px;
+    }
+
+    .question-content .number {
+        font-size: 1.8rem;
+    }
+
+    .question-content .operator,
+    .question-content .equals {
+        font-size: 1.4rem;
+    }
+
+    .question-content .question-mark {
+        font-size: 1.8rem;
+    }
+
+    /* Answer buttons (Practice mode) */
+    .answers-grid {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
+    .answer-btn {
+        min-height: 50px;
+        font-size: 1.4rem;
+    }
+
+    /* Typing area + Number pad (Tournament mode) */
+    .typing-area {
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    .answer-input {
+        height: 50px;
+        font-size: 1.8rem;
+    }
+
+    .number-pad {
+        gap: 4px;
+        margin-top: 2px;
+    }
+
+    .num-btn {
+        min-height: 36px;
+        font-size: 1.3rem;
+    }
+
+    .feedback {
+        height: 20px;
+    }
+
+    .feedback-text {
+        font-size: 0.9rem;
+    }
+
+    /* Game over screen */
+    #gameover-screen {
+        gap: 12px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .final-stats {
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+}
+
 /* Start Screen Actions */
 .start-actions {
     display: flex;

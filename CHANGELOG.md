@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-02-11
+
+### Added
+- **Practice Mode Rewards**: Players now earn a card reward every 15 correct answers in a streak during Practice Mode.
+
+### Fixed
+- **Landscape Layout**: Fixed numbers and UI elements being cut off on landscape-format screens (Chromebooks, iPads in landscape). The game now constrains to the viewport height and compresses elements to fit.
+- **Number Pad in Practice Mode**: Fixed the number pad incorrectly appearing in Practice Mode (multiple-choice) after playing a Tournament Mode session.
+
 ## [1.1.0] - 2026-02-07
 
 ### Added

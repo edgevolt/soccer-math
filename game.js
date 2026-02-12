@@ -534,7 +534,9 @@ function randomChoice(array) {
 // ========================================
 
 const STREAK_BONUS_INTERVAL = 5;
+const PRACTICE_STREAK_REWARD_INTERVAL = 15;
 let lastBonusStreak = 0;
+let lastPracticeRewardStreak = 0;
 
 /**
  * Check if current streak qualifies for a bonus wheel
@@ -551,6 +553,27 @@ function checkStreakBonus() {
     if (currentStreak > 0 && currentStreak % STREAK_BONUS_INTERVAL === 0 && currentStreak > lastBonusStreak) {
         lastBonusStreak = currentStreak;
         showStreakBonusWheel();
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Check if current streak in practice mode qualifies for a card reward.
+ * Awards a regular lucky block card every 15-streak interval.
+ */
+function checkPracticeStreakReward() {
+    // Only in practice mode
+    if (gameState.gameMode !== 'practice') {
+        return false;
+    }
+
+    const currentStreak = gameState.streak;
+
+    // Check if we've hit a new multiple of 15 (15, 30, 45, ...)
+    if (currentStreak > 0 && currentStreak % PRACTICE_STREAK_REWARD_INTERVAL === 0 && currentStreak > lastPracticeRewardStreak) {
+        lastPracticeRewardStreak = currentStreak;
+        showLuckyBlockReward();
         return true;
     }
     return false;
@@ -1217,6 +1240,7 @@ function showQuestion() {
         // Multiple choice mode
         elements.answersGrid.style.display = 'grid';
         elements.typingArea.style.display = 'none';
+        elements.numberPad.style.display = 'none';
 
         // Update answer buttons
         elements.answerBtns.forEach((btn, index) => {
@@ -1376,6 +1400,9 @@ function handleCorrectAnswer(buttonIndex) {
     // Check for streak bonus milestones
     checkStreakBonus();
 
+    // Check for practice mode streak rewards (card every 15 streak)
+    const isPracticeRewardShown = checkPracticeStreakReward();
+
     // Check for level up
     const didLevelUp = updateLevel();
 
@@ -1383,7 +1410,7 @@ function handleCorrectAnswer(buttonIndex) {
     const isStreakBonusShown = elements.streakWheelOverlay.classList.contains('show');
 
     // Return whether we showed an overlay so the caller knows not to auto-advance
-    return { didLevelUp, isStreakBonusShown };
+    return { didLevelUp, isStreakBonusShown: isStreakBonusShown || isPracticeRewardShown };
 }
 
 /**
@@ -1625,8 +1652,9 @@ function startGame() {
     // Clear missed questions for fresh start (prevent old data from blocking level-ups)
     saveMissedQuestions({});
 
-    // Reset streak bonus tracker
+    // Reset streak bonus trackers
     lastBonusStreak = 0;
+    lastPracticeRewardStreak = 0;
 
     // Reset UI
     elements.scoreDisplay.textContent = '0';

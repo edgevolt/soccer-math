@@ -26,6 +26,7 @@ Players automatically advance through levels based on their performance!
 - 📊 **Performance Stats**: Track accuracy, best streak, and total goals scored
 - 🎵 **Background Music**: Optional background tunes with global toggle
 - 🎡 **Streak Bonus Wheel**: Spin for rare cards every 5 correct answers (Tournament Mode, Level 3)
+- 🎁 **Practice Rewards**: Earn a card reward every 15 correct answers in a streak (Practice Mode)
 
 ## 🚀 Getting Started
 
