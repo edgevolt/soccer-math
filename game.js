@@ -946,6 +946,18 @@ function pauseMusic() {
 }
 
 // ========================================
+// DEVICE DETECTION
+// ========================================
+
+/**
+ * Detect if the user is on a PC (has physical keyboard).
+ * Returns true for devices without touch support (desktops/laptops).
+ */
+function isPC() {
+    return navigator.maxTouchPoints === 0 && window.matchMedia('(hover: hover)').matches;
+}
+
+// ========================================
 // SCREEN MANAGEMENT
 // ========================================
 
@@ -1260,8 +1272,12 @@ function showQuestion() {
         elements.answerInput.disabled = false;
         elements.submitAnswerBtn.disabled = false;
 
-        // Prevent native keyboard on mobile
-        elements.answerInput.setAttribute('readonly', 'readonly');
+        // Prevent native keyboard on mobile/tablet (PC users can type directly)
+        if (!isPC()) {
+            elements.answerInput.setAttribute('readonly', 'readonly');
+        } else {
+            elements.answerInput.removeAttribute('readonly');
+        }
     }
 
     // Reset feedback
@@ -1807,6 +1823,40 @@ function initEventListeners() {
     // Number pad buttons
     elements.numBtns.forEach(btn => {
         btn.addEventListener('click', handleNumberPadClick);
+    });
+
+    // Physical keyboard input for tournament mode (PC only)
+    document.addEventListener('keydown', (e) => {
+        // Only handle during active tournament typing mode
+        if (!gameState.isPlaying || gameState.inputMode !== 'typing') return;
+
+        // Don't handle if an overlay is visible
+        if (elements.luckyBlockOverlay.classList.contains('show') ||
+            elements.streakWheelOverlay.classList.contains('show') ||
+            elements.quitModal.classList.contains('show')) return;
+
+        // Don't handle if input is disabled (answer already submitted)
+        if (elements.answerInput.disabled) return;
+
+        const input = elements.answerInput;
+
+        // Digit keys (main keyboard and numpad)
+        if ((e.key >= '0' && e.key <= '9')) {
+            e.preventDefault();
+            if (input.value.length < 4) {
+                input.value += e.key;
+            }
+        }
+        // Backspace
+        else if (e.key === 'Backspace') {
+            e.preventDefault();
+            input.value = input.value.slice(0, -1);
+        }
+        // Enter - submit answer
+        else if (e.key === 'Enter') {
+            e.preventDefault();
+            handleTypedAnswer();
+        }
     });
 
     // Done button (practice mode)
