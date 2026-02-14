@@ -2257,7 +2257,14 @@ function endWCRound() {
     if (score >= round.required) {
         // ADVANCE
         elements.wcResultTitle.textContent = `\u2705 Victory!`;
-        elements.wcResultMessage.textContent = `You advance to the ${wcState.currentRound < 3 ? CONFIG.worldCup.rounds[wcState.currentRound + 1].name : 'Champion'}!`;
+
+        if (wcState.currentRound === 4) {
+            elements.wcResultMessage.textContent = "You have won the World Cup!";
+        } else {
+            const nextRound = wcState.currentRound === 3 ? 'World Cup final' : CONFIG.worldCup.rounds[wcState.currentRound + 1].name;
+            elements.wcResultMessage.textContent = `You advance to the ${nextRound}!`;
+        }
+
         elements.wcResultContinue.textContent = 'Continue \u2192';
         elements.wcResultContinue.onclick = () => advanceWCRound();
 

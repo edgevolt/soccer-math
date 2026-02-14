@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] - 2026-02-14
+
+### Changed
+- **Mobile Layout**: Improved layout for mobile devices in World Cup mode. Implemented a tiered approach that aggressively compacts the keypad and input area for small screens to prevent cutoff, while optimizing spacing for taller modern phones.
+- **Victory Messages**: Corrected the text for Semi-Final victory from "You advance to the Champion!!" to "You advance to the World Cup final!".
+
+### Fixed
+- **Button Alignment**: Fixed the alignment of "Play Again" and "Home" buttons on the game over screen.
+- **Quit Modal**: Fixed the alignment of buttons in the "Quit Tournament" modal.
 ## [1.2.1] - 2026-02-13
 
 ### Changed
