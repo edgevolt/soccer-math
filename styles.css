@@ -2442,3 +2442,455 @@ body::before {
 @media (prefers-color-scheme: light) {
     /* Keep dark theme for game immersion */
 }
+
+/* ========================================
+   WORLD CUP MODE
+   ======================================== */
+
+/* Country Selection Screen */
+.country-select-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.country-select-header h2 {
+    font-size: 1.6rem;
+    color: #fff;
+    margin-bottom: 0.3rem;
+}
+
+.country-select-sub {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.country-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+    padding: 0 10px;
+}
+
+.country-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.country-btn:hover,
+.country-btn:active {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.country-flag {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.country-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.1;
+}
+
+#country-back-btn {
+    display: block;
+    margin: 0 auto;
+}
+
+/* World Cup Match Banner */
+.wc-match-banner {
+    background: linear-gradient(135deg, rgba(0, 80, 0, 0.5), rgba(0, 120, 60, 0.5));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.wc-round-name {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+.wc-matchup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.wc-team {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.wc-flag {
+    font-size: 1.3rem;
+}
+
+.wc-team-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.wc-vs {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.wc-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.wc-divider {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.wc-score-display {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.wc-target-display {
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+/* World Cup Round Result Screen */
+.wc-result-content {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.wc-result-title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.wc-result-matchup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.wc-result-team {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.wc-result-score {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    min-width: 40px;
+    text-align: center;
+}
+
+.wc-result-vs {
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 700;
+}
+
+.wc-result-message {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+}
+
+/* Penalty Shootout Overlay */
+.wc-penalty-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+    pointer-events: none;
+}
+
+.wc-penalty-content {
+    background: linear-gradient(135deg, rgba(200, 30, 30, 0.95), rgba(180, 0, 0, 0.95));
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 10px 24px;
+    text-align: center;
+    animation: penaltyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes penaltyPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(255, 0, 0, 0.7);
+    }
+}
+
+.wc-penalty-title {
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.wc-penalty-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.wc-penalty-timer-label {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.wc-penalty-timer {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #FFD700;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* World Cup Final Screen */
+.wc-final-content {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.wc-final-icon {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+    animation: trophyBounce 1s ease-out;
+}
+
+@keyframes trophyBounce {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.wc-final-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.wc-final-country {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.wc-final-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.wc-stat {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.wc-stat strong {
+    color: var(--primary-color);
+}
+
+/* WC Cards Display */
+.wc-result-cards,
+.wc-final-cards {
+    margin: 1rem 0;
+}
+
+.wc-cards-title {
+    font-size: 1rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+.wc-card-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    margin: 4px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.wc-card-item.rarity-2 {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.wc-card-item.rarity-3 {
+    border-color: #f39c12;
+    background: rgba(243, 156, 18, 0.2);
+}
+
+.wc-card-item.rarity-4 {
+    border-color: #9b59b6;
+    background: rgba(155, 89, 182, 0.2);
+}
+
+.wc-card-item.rarity-5 {
+    border-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.2);
+}
+
+.wc-card-emoji {
+    font-size: 1.2rem;
+}
+
+.wc-card-name {
+    font-size: 0.8rem;
+}
+
+/* Responsive: Country grid on small screens */
+@media (max-width: 380px) {
+    .country-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .country-flag {
+        font-size: 1.6rem;
+    }
+
+    .country-name {
+        font-size: 0.65rem;
+    }
+}
+
+/* Landscape adjustments for WC */
+@media (orientation: landscape) and (max-height: 500px) {
+    .country-grid {
+        grid-template-columns: repeat(8, 1fr);
+        gap: 6px;
+    }
+
+    .country-btn {
+        padding: 6px 4px;
+    }
+
+    .country-flag {
+        font-size: 1.4rem;
+    }
+
+    .wc-match-banner {
+        padding: 4px 10px;
+        margin-bottom: 2px;
+    }
+
+    .wc-round-name {
+        font-size: 0.6rem;
+        margin-bottom: 2px;
+    }
+
+    .wc-flag {
+        font-size: 1rem;
+    }
+
+    .wc-team-name {
+        font-size: 0.7rem;
+    }
+
+    .wc-progress {
+        font-size: 0.6rem;
+    }
+
+    .wc-result-title {
+        font-size: 1.3rem;
+    }
+
+    .wc-result-score {
+        font-size: 1.6rem;
+    }
+
+    .wc-final-icon {
+        font-size: 2.5rem;
+    }
+
+    .wc-final-title {
+        font-size: 1.3rem;
+    }
+
+    .wc-penalty-content {
+        padding: 6px 16px;
+    }
+
+    .wc-penalty-title {
+        font-size: 0.8rem;
+    }
+}
+
+/* ========================================
+   TOUCH OPTIMIZATIONS
+   ======================================== */
+button,
+input,
+select,
+textarea,
+.toggle-btn,
+.country-btn,
+.answer-btn {
+    touch-action: manipulation;
+}

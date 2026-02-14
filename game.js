@@ -157,7 +157,35 @@ const CONFIG = {
 
     // Encouraging messages
     goalMessages: ['GOAL! ⚽', 'AMAZING! 🌟', 'BRILLIANT! ✨', 'SUPERSTAR! 🤩', 'HAT TRICK! 🎩'],
-    missMessages: ['Try again!', 'So close!', 'Keep going!', 'You got this!']
+    missMessages: ['Try again!', 'So close!', 'Keep going!', 'You got this!'],
+
+    // World Cup mode
+    worldCup: {
+        countries: [
+            { name: 'Brazil', emoji: '🇧🇷' },
+            { name: 'Argentina', emoji: '🇦🇷' },
+            { name: 'France', emoji: '🇫🇷' },
+            { name: 'Germany', emoji: '🇩🇪' },
+            { name: 'England', emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+            { name: 'Spain', emoji: '🇪🇸' },
+            { name: 'Portugal', emoji: '🇵🇹' },
+            { name: 'Netherlands', emoji: '🇳🇱' },
+            { name: 'Italy', emoji: '🇮🇹' },
+            { name: 'USA', emoji: '🇺🇸' },
+        ],
+        rounds: [
+            { name: 'Group Stage', diff: 0, level: 1, questions: 5, required: 3, drawScore: 2 },
+            { name: 'Round of 16', diff: 1, level: 2, questions: 10, required: 7, drawScore: 6 },
+            { name: 'Quarter-Finals', diff: 2, level: 2, questions: 12, required: 9, drawScore: 8 },
+            { name: 'Semi-Finals', diff: 3, level: 3, questions: 15, required: 12, drawScore: 11 },
+            { name: 'Final', diff: 4, level: 3, questions: 20, required: 18, drawScore: 17 }
+        ],
+        penalty: {
+            questions: 5,
+            timePerQuestion: 6, // Reduced to 6 seconds per kick
+            requiredCorrect: 3
+        }
+    }
 };
 
 // ========================================
@@ -172,13 +200,30 @@ let gameState = {
     totalQuestions: 0,
     correctAnswers: 0,
     operationType: 'multiplication', // Default operation
-    gameMode: 'practice', // 'practice' or 'tournament'
+    gameMode: 'practice', // 'practice', 'tournament', or 'worldcup'
     startingLevel: 1,
     timeRemaining: 90,
     timerInterval: null,
     collectedCards: loadAndMergeCards(), // Load existing cards from storage
     sessionStartIndex: 0, // Index in localStorage array where this session started
     isMusicPlaying: false // Background music state
+};
+
+// World Cup specific state (kept separate to avoid polluting gameState)
+let wcState = {
+    playerCountry: null,
+    opponents: [],
+    currentRound: 0,
+    roundScore: 0,
+    roundQuestionIndex: 0,
+    isPenalty: false,
+    penaltyScore: 0,
+    penaltyQuestionIndex: 0,
+    penaltyTimerId: null,
+    cleanSheetRounds: [],
+    wcCards: [],
+    totalGoals: 0,
+    totalQuestions: 0
 };
 
 
@@ -280,7 +325,41 @@ const elements = {
 
     // Music elements
     bgmAudio: document.getElementById('bgm-audio'),
-    globalMusicBtn: document.getElementById('global-music-btn')
+    globalMusicBtn: document.getElementById('global-music-btn'),
+
+    // World Cup elements
+    countrySelectScreen: document.getElementById('country-select-screen'),
+    countryGrid: document.getElementById('country-grid'),
+    countryBackBtn: document.getElementById('country-back-btn'),
+    wcMatchBanner: document.getElementById('wc-match-banner'),
+    wcRoundName: document.getElementById('wc-round-name'),
+    wcPlayerFlag: document.getElementById('wc-player-flag'),
+    wcPlayerName: document.getElementById('wc-player-name'),
+    wcOpponentFlag: document.getElementById('wc-opponent-flag'),
+    wcOpponentName: document.getElementById('wc-opponent-name'),
+    wcScoreDisplay: document.getElementById('wc-score-display'),
+    wcQuestionCounter: document.getElementById('wc-question-counter'),
+    wcTargetDisplay: document.getElementById('wc-target-display'),
+    wcRoundResult: document.getElementById('wc-round-result'),
+    wcResultTitle: document.getElementById('wc-result-title'),
+    wcResultPlayer: document.getElementById('wc-result-player'),
+    wcResultScore: document.getElementById('wc-result-score'),
+    wcResultTarget: document.getElementById('wc-result-target'),
+    wcResultOpponent: document.getElementById('wc-result-opponent'),
+    wcResultMessage: document.getElementById('wc-result-message'),
+    wcResultCards: document.getElementById('wc-result-cards'),
+    wcResultContinue: document.getElementById('wc-result-continue'),
+    wcPenaltyOverlay: document.getElementById('wc-penalty-overlay'),
+    wcPenaltyScore: document.getElementById('wc-penalty-score'),
+    wcPenaltyTimer: document.getElementById('wc-penalty-timer'),
+    wcFinalScreen: document.getElementById('wc-final-screen'),
+    wcFinalIcon: document.getElementById('wc-final-icon'),
+    wcFinalTitle: document.getElementById('wc-final-title'),
+    wcFinalCountry: document.getElementById('wc-final-country'),
+    wcFinalStats: document.getElementById('wc-final-stats'),
+    wcFinalCards: document.getElementById('wc-final-cards'),
+    wcPlayAgainBtn: document.getElementById('wc-play-again-btn'),
+    wcHomeBtn: document.getElementById('wc-home-btn')
 };
 
 // ========================================
@@ -749,34 +828,50 @@ function saveHighScore(score) {
 // ========================================
 
 function initModeToggles() {
+    // Helper to add touch-friendly listeners
+    function addToggleListener(buttons, callback) {
+        buttons.forEach(btn => {
+            // Touch handler (for immediate response on mobile)
+            btn.addEventListener('touchstart', (e) => {
+                // Only prevent default if it's a button tap, allowing scrolling elsewhere
+                if (e.cancelable) e.preventDefault();
+                callback(btn);
+            }, { passive: false });
+
+            // Click handler (desktop/fallback)
+            btn.addEventListener('click', (e) => {
+                // Prevent double-firing if touch already handled it (though preventDefault handles that usually)
+                callback(btn);
+            });
+        });
+    }
+
     // Operation toggle (multiplication / division)
     const operationBtns = elements.operationToggle.querySelectorAll('.toggle-btn');
-    operationBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            operationBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            gameState.operationType = btn.dataset.value;
+    addToggleListener(operationBtns, (btn) => {
+        operationBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        gameState.operationType = btn.dataset.value;
 
-
-
-            updateGameModeHint();
-            loadHighScore(); // Update high score for selected mode
-        });
+        updateGameModeHint();
+        loadHighScore(); // Update high score for selected mode
     });
 
-    // Game mode toggle (practice / tournament)
+    // Game mode toggle (practice / tournament / worldcup)
     const gameModeBtns = elements.gameModeToggle.querySelectorAll('.toggle-btn');
-    gameModeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            gameModeBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            gameState.gameMode = btn.dataset.value;
+    addToggleListener(gameModeBtns, (btn) => {
+        gameModeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        gameState.gameMode = btn.dataset.value;
 
-            // Set input mode based on game mode
-            gameState.inputMode = btn.dataset.value === 'practice' ? 'choice' : 'typing';
+        // Set input mode based on game mode
+        if (btn.dataset.value === 'practice') {
+            gameState.inputMode = 'choice';
+        } else {
+            gameState.inputMode = 'typing';
+        }
 
-            updateGameModeHint();
-        });
+        updateGameModeHint();
     });
 }
 
@@ -787,6 +882,8 @@ function initModeToggles() {
 function updateGameModeHint() {
     if (gameState.gameMode === 'practice') {
         elements.gameModeHint.textContent = 'Multiple choice • No timer';
+    } else if (gameState.gameMode === 'worldcup') {
+        elements.gameModeHint.textContent = 'Round-based • Sprint to victory';
     } else {
         elements.gameModeHint.textContent = 'Type answers • Timed';
     }
@@ -983,6 +1080,9 @@ function showScreen(screenId) {
     elements.gameScreen.classList.remove('active');
     elements.gameoverScreen.classList.remove('active');
     elements.galleryScreen.classList.remove('active');
+    if (elements.countrySelectScreen) elements.countrySelectScreen.classList.remove('active');
+    if (elements.wcRoundResult) elements.wcRoundResult.classList.remove('active');
+    if (elements.wcFinalScreen) elements.wcFinalScreen.classList.remove('active');
 
     // Show requested screen
     document.getElementById(screenId).classList.add('active');
@@ -997,6 +1097,8 @@ function showScreen(screenId) {
  */
 function updateLevel() {
     // Calculate what level should be based on correct answers
+    if (gameState.gameMode === 'worldcup') return false;
+
     let newLevel = gameState.startingLevel; // Never go below starting level
 
     const levelConfig = gameState.operationType === 'fractions' ? CONFIG.fractionLevels : CONFIG.levels;
@@ -1064,8 +1166,13 @@ function showLevelUpCelebration(level) {
 /**
  * Generate a multiplication question based on current level
  */
+/**
+ * Generate a multiplication question based on current level
+ */
 function generateMultiplicationQuestion() {
-    const level = CONFIG.levels[gameState.currentLevel];
+    // Force Level 1 if in Penalty Mode (safeguard)
+    const levelToUse = (gameState.gameMode === 'worldcup' && wcState.isPenalty) ? 1 : gameState.currentLevel;
+    const level = CONFIG.levels[levelToUse];
     const tables = level.tables;
 
     // Pick a random multiplier from current level's tables
@@ -1473,9 +1580,17 @@ function handleAnswer(selectedIndex) {
         const delay = isCorrect ? 800 : 3500;
         setTimeout(() => {
             if (gameState.isPlaying) {
-                showQuestion();
+                // In World Cup mode, check if round is complete
+                if (gameState.gameMode === 'worldcup') {
+                    handleWCAnswer(isCorrect);
+                } else {
+                    showQuestion();
+                }
             }
         }, delay);
+    } else if (gameState.gameMode === 'worldcup') {
+        // Still track WC progress even during overlays
+        handleWCAnswer(isCorrect);
     }
 }
 
@@ -1519,9 +1634,17 @@ function handleTypedAnswer() {
         const delay = isCorrect ? 800 : 3500;
         setTimeout(() => {
             if (gameState.isPlaying) {
-                showQuestion();
+                // In World Cup mode, check if round is complete
+                if (gameState.gameMode === 'worldcup') {
+                    handleWCAnswer(isCorrect);
+                } else {
+                    showQuestion();
+                }
             }
         }, delay);
+    } else if (gameState.gameMode === 'worldcup') {
+        // Still track WC progress even during overlays
+        handleWCAnswer(isCorrect);
     }
 }
 
@@ -1804,6 +1927,12 @@ function saveCollectedCards() {
 // ========================================
 
 function startGame() {
+    // Route to World Cup if selected
+    if (gameState.gameMode === 'worldcup') {
+        startWorldCup();
+        return;
+    }
+
     // Save session start index for quit functionality
     gameState.sessionStartIndex = gameState.collectedCards.length;
 
@@ -1837,6 +1966,9 @@ function startGame() {
         dot.classList.toggle('active', index < gameState.startingLevel);
     });
     elements.timerDisplay.classList.remove('warning', 'practice');
+
+    // Hide WC banner for non-WC modes
+    if (elements.wcMatchBanner) elements.wcMatchBanner.style.display = 'none';
 
     // Configure for practice vs tournament mode
     if (gameState.gameMode === 'practice') {
@@ -1944,7 +2076,542 @@ function confirmQuit() {
     closeQuitModal();
     gameState.isPlaying = false;
     stopTimer();
+    if (wcState.penaltyTimerId) { clearInterval(wcState.penaltyTimerId); wcState.penaltyTimerId = null; }
     goHome();
+}
+
+// ========================================
+// WORLD CUP MODE
+// ========================================
+
+/**
+ * Start World Cup mode — show country selection
+ */
+function startWorldCup() {
+    // Populate country grid
+    elements.countryGrid.innerHTML = '';
+    CONFIG.worldCup.countries.forEach(country => {
+        const btn = document.createElement('button');
+        btn.className = 'country-btn';
+        btn.innerHTML = `<span class="country-flag">${country.emoji}</span><span class="country-name">${country.name}</span>`;
+        btn.addEventListener('click', () => selectCountry(country));
+        elements.countryGrid.appendChild(btn);
+    });
+
+    showScreen('country-select-screen');
+}
+
+/**
+ * Player selects a country — generate opponents and start round 1
+ */
+function selectCountry(country) {
+    wcState.playerCountry = country;
+    wcState.currentRound = 0;
+    wcState.cleanSheetRounds = [];
+    wcState.wcCards = [];
+    wcState.totalGoals = 0;
+    wcState.totalQuestions = 0;
+
+    // Generate 4 random opponents (different from player)
+    const available = CONFIG.worldCup.countries.filter(c => c.name !== country.name);
+    wcState.opponents = [];
+    const shuffled = [...available].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < 4; i++) {
+        wcState.opponents.push(shuffled[i]);
+    }
+
+    // Save session start index
+    gameState.sessionStartIndex = gameState.collectedCards.length;
+
+    startWCRound();
+}
+
+/**
+ * Start a World Cup round
+ */
+function startWCRound() {
+    const round = CONFIG.worldCup.rounds[wcState.currentRound];
+    const opponent = wcState.opponents[wcState.currentRound];
+
+    // Reset round tracking
+    wcState.roundScore = 0;
+    wcState.roundQuestionIndex = 0;
+    wcState.isPenalty = false;
+
+    // Set difficulty level based on round
+    // Set difficulty level based on round
+    // Group: Level 1, Ro16/Quarters: Level 2, Semis/Final: Level 3
+    if (wcState.currentRound === 0) {
+        gameState.currentLevel = 1;
+    } else if (wcState.currentRound <= 2) {
+        gameState.currentLevel = 2;
+    } else {
+        gameState.currentLevel = 3;
+    }
+
+    // Reset game state for this round
+    gameState.isPlaying = true;
+    gameState.inputMode = 'typing';
+    gameState.score = 0;
+    gameState.streak = 0;
+    gameState.bestStreak = 0;
+    gameState.totalQuestions = 0;
+    gameState.correctAnswers = 0;
+
+    // Reset streak trackers
+    lastBonusStreak = 0;
+    lastPracticeRewardStreak = 0;
+
+    // Clear missed questions
+    saveMissedQuestions({});
+
+    // Update UI
+    elements.scoreDisplay.textContent = '0';
+    elements.streakDisplay.textContent = '0';
+    elements.streakFire.classList.remove('active');
+    elements.timerDisplay.classList.remove('warning', 'practice');
+
+    // Hide timer, done button — WC has no global timer
+    elements.timerSection.style.display = 'none';
+    elements.doneBtn.style.display = 'none';
+    elements.quitBtn.style.display = 'block';
+
+    // Show WC match banner
+    elements.wcMatchBanner.style.display = 'block';
+    elements.wcRoundName.textContent = round.name;
+    elements.wcPlayerFlag.textContent = wcState.playerCountry.emoji;
+    elements.wcPlayerName.textContent = wcState.playerCountry.name;
+    elements.wcOpponentFlag.textContent = opponent.emoji;
+    elements.wcOpponentName.textContent = opponent.name;
+    elements.wcScoreDisplay.textContent = `Goals: 0`;
+    elements.wcQuestionCounter.textContent = `Q 1/${round.questions}`;
+    elements.wcTargetDisplay.textContent = `Need: ${round.required}`;
+
+    // Set level display
+    const levelConfig = gameState.operationType === 'fractions' ? CONFIG.fractionLevels : CONFIG.levels;
+    elements.levelText.textContent = levelConfig[round.level].name;
+    elements.levelDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index < round.level);
+    });
+
+    // Hide penalty overlay
+    elements.wcPenaltyOverlay.style.display = 'none';
+
+    // Show game screen
+    showScreen('game-screen');
+    showQuestion();
+}
+
+/**
+ * Handle answer tracking for World Cup mode
+ * Called after each question is answered (from the delay timeout)
+ */
+function handleWCAnswer(isCorrect) {
+    if (wcState.isPenalty) {
+        handlePenaltyAnswer(isCorrect);
+        return;
+    }
+
+    const round = CONFIG.worldCup.rounds[wcState.currentRound];
+
+    // Track the answer
+    if (isCorrect) {
+        wcState.roundScore++;
+        wcState.totalGoals++;
+    }
+    wcState.roundQuestionIndex++;
+    wcState.totalQuestions++;
+
+    // Update WC HUD
+    elements.wcScoreDisplay.textContent = `Goals: ${wcState.roundScore}`;
+    elements.wcQuestionCounter.textContent = `Q ${Math.min(wcState.roundQuestionIndex + 1, round.questions)}/${round.questions}`;
+
+    // Check if round is complete
+    if (wcState.roundQuestionIndex >= round.questions) {
+        endWCRound();
+    } else {
+        showQuestion();
+    }
+}
+
+/**
+ * End current WC round — evaluate result
+ */
+function endWCRound() {
+    gameState.isPlaying = false;
+    const round = CONFIG.worldCup.rounds[wcState.currentRound];
+    const opponent = wcState.opponents[wcState.currentRound];
+    const score = wcState.roundScore;
+
+    // Check for clean sheet (100% accuracy)
+    if (score === round.questions) {
+        wcState.cleanSheetRounds.push(wcState.currentRound);
+    }
+
+    // Update result screen
+    elements.wcResultPlayer.textContent = `${wcState.playerCountry.emoji} ${wcState.playerCountry.name}`;
+    elements.wcResultOpponent.textContent = `${opponent.name} ${opponent.emoji}`;
+    elements.wcResultScore.textContent = score;
+    elements.wcResultTarget.textContent = round.required;
+
+    if (score >= round.required) {
+        // ADVANCE
+        elements.wcResultTitle.textContent = `\u2705 Victory!`;
+        elements.wcResultMessage.textContent = `You advance to the ${wcState.currentRound < 3 ? CONFIG.worldCup.rounds[wcState.currentRound + 1].name : 'Champion'}!`;
+        elements.wcResultContinue.textContent = 'Continue \u2192';
+        elements.wcResultContinue.onclick = () => advanceWCRound();
+
+        // Award cards for this result
+        awardRoundCards();
+
+    } else if (score === round.drawScore) {
+        // DRAW — Penalty Shootout
+        elements.wcResultTitle.textContent = `\ud83d\udfe1 It\u2019s a Draw!`;
+        elements.wcResultMessage.textContent = 'Penalty Shootout incoming!';
+        elements.wcResultContinue.textContent = 'Penalty Shootout \u26bd';
+        elements.wcResultContinue.onclick = () => startPenaltyShootout();
+
+    } else {
+        // ELIMINATED
+        elements.wcResultTitle.textContent = `\u274c Defeated`;
+        elements.wcResultMessage.textContent = `You needed ${round.required} goals but only scored ${score}.`;
+        elements.wcResultContinue.textContent = 'View Results';
+        elements.wcResultContinue.onclick = () => showWCEliminated();
+    }
+
+    // Show round result cards if any were earned this round
+    displayWCResultCards(elements.wcResultCards, wcState.wcCards);
+
+    showScreen('wc-round-result');
+}
+
+/**
+ * Award milestone cards based on current round advancement
+ */
+function awardRoundCards() {
+    const round = CONFIG.worldCup.rounds[wcState.currentRound];
+
+    // Clean sheet bonus — Golden Gloves card
+    if (wcState.roundScore === round.questions) {
+        const goldenGloves = {
+            name: 'Golden Gloves',
+            fullName: 'Golden Gloves Award',
+            team: wcState.playerCountry.name,
+            emoji: '\ud83e\udde4',
+            rarity: 3,
+            stats: { PAC: 70, SHO: 40, PAS: 75, DRI: 65, DEF: 96, PHY: 90 }
+        };
+        wcState.wcCards.push(goldenGloves);
+        gameState.collectedCards.push(goldenGloves);
+    }
+
+    // Advancing to Semi-Finals — National Star card
+    if (wcState.currentRound === 2) { // Advancing FROM QF (index 2) TO SF
+        const nationalStar = {
+            name: `${wcState.playerCountry.name} Star`,
+            fullName: `${wcState.playerCountry.name} National Star`,
+            team: wcState.playerCountry.name,
+            emoji: wcState.playerCountry.emoji,
+            rarity: 2,
+            stats: { PAC: 88, SHO: 85, PAS: 82, DRI: 87, DEF: 60, PHY: 78 }
+        };
+        wcState.wcCards.push(nationalStar);
+        gameState.collectedCards.push(nationalStar);
+    }
+}
+
+/**
+ * Advance to the next World Cup round
+ */
+function advanceWCRound() {
+    wcState.currentRound++;
+
+    if (wcState.currentRound >= CONFIG.worldCup.rounds.length) {
+        // Won the World Cup!
+        showWCChampion();
+    } else {
+        startWCRound();
+    }
+}
+
+// ----------------------------------------
+// PENALTY SHOOTOUT
+// ----------------------------------------
+
+function startPenaltyShootout() {
+    wcState.isPenalty = true;
+    wcState.penaltyScore = 0;
+    wcState.penaltyQuestionIndex = 0;
+
+    gameState.isPlaying = true;
+    gameState.inputMode = 'typing';
+
+    // Set to easiest level for penalty
+    gameState.currentLevel = 1;
+
+    // Show penalty overlay
+    elements.wcPenaltyOverlay.style.display = 'flex';
+    elements.wcPenaltyScore.textContent = `Goals: 0/${CONFIG.worldCup.penalty.questions}`;
+    elements.wcPenaltyTimer.textContent = CONFIG.worldCup.penalty.timePerQuestion;
+
+    // Show game screen with penalty overlay
+    // Show game screen with penalty overlay
+    showScreen('game-screen');
+    elements.wcMatchBanner.style.display = 'block';
+
+    // Show warning about timed kicks
+    const originalText = elements.wcMatchBanner.innerHTML;
+    const warningMsg = document.createElement('div');
+    warningMsg.innerHTML = '<div style="background: #f87171; color: white; padding: 10px; text-align: center; border-radius: 8px; margin: 10px 0; font-weight: bold; animation: pulse 1s infinite;">⚠️ TIMED KICKS! 6 SECONDS! ⚠️</div>';
+
+    // Insert warning before the banner content
+    elements.wcMatchBanner.parentNode.insertBefore(warningMsg, elements.wcMatchBanner);
+
+    // Remove warning after 3 seconds and start
+    setTimeout(() => {
+        warningMsg.remove();
+        showPenaltyQuestion();
+    }, 3000);
+}
+
+function showPenaltyQuestion() {
+    // Clear any existing timer
+    if (wcState.penaltyTimerId) {
+        clearInterval(wcState.penaltyTimerId);
+        wcState.penaltyTimerId = null;
+    }
+
+    if (wcState.penaltyQuestionIndex >= CONFIG.worldCup.penalty.questions) {
+        endPenaltyShootout();
+        return;
+    }
+
+    // Generate a simpler question (always Level 1, never fractions during penalty)
+    const savedOp = gameState.operationType;
+    if (gameState.operationType === 'fractions') {
+        // Use multiplication for penalty — simpler and faster
+        gameState.operationType = 'multiplication';
+    }
+    gameState.currentLevel = 1;
+
+    showQuestion();
+
+    // Restore original operation type immediately after generation 
+    // (so game logic doesn't get confused, but we used the temp one for generation)
+    gameState.operationType = savedOp;
+
+    // Start per-question timer
+    let timeLeft = CONFIG.worldCup.penalty.timePerQuestion;
+    elements.wcPenaltyTimer.textContent = timeLeft;
+
+    if (wcState.penaltyTimerId) clearInterval(wcState.penaltyTimerId);
+    wcState.penaltyTimerId = setInterval(() => {
+        timeLeft--;
+        elements.wcPenaltyTimer.textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(wcState.penaltyTimerId);
+            wcState.penaltyTimerId = null;
+            // Time's up — count as a miss
+            penaltyTimedOut();
+        }
+    }, 1000);
+}
+
+function penaltyTimedOut() {
+    // Show miss feedback
+    showFeedback('Time\'s up! Save by the keeper!', 'miss');
+    elements.ball.classList.remove('kick', 'miss');
+    void elements.ball.offsetWidth;
+    elements.ball.classList.add('miss');
+
+    wcState.penaltyQuestionIndex++;
+    elements.wcPenaltyScore.textContent = `Goals: ${wcState.penaltyScore}/${CONFIG.worldCup.penalty.questions}`;
+
+    // Clear timer to prevent double-firing
+    if (wcState.penaltyTimerId) {
+        clearInterval(wcState.penaltyTimerId);
+        wcState.penaltyTimerId = null;
+    }
+
+    setTimeout(() => {
+        // Show next kick prompt instead of auto-advancing
+        showNextKickPrompt();
+    }, 1500);
+}
+
+function handlePenaltyAnswer(isCorrect) {
+    // Clear penalty timer immediately
+    if (wcState.penaltyTimerId) {
+        clearInterval(wcState.penaltyTimerId);
+        wcState.penaltyTimerId = null;
+    }
+
+    if (isCorrect) {
+        wcState.penaltyScore++;
+    }
+    wcState.penaltyQuestionIndex++;
+
+    elements.wcPenaltyScore.textContent = `Goals: ${wcState.penaltyScore}/${CONFIG.worldCup.penalty.questions}`;
+
+    if (wcState.penaltyQuestionIndex >= CONFIG.worldCup.penalty.questions) {
+        endPenaltyShootout();
+    } else {
+        // Show next kick prompt instead of auto-advancing
+        setTimeout(() => {
+            showNextKickPrompt();
+        }, 1500);
+    }
+}
+
+/**
+ * Show prompt to proceed to next kick
+ */
+function showNextKickPrompt() {
+    // Hide keyboard/inputs
+    if (elements.typingArea) elements.typingArea.style.display = 'none';
+    if (elements.answersGrid) elements.answersGrid.style.display = 'none';
+    if (elements.numberPad) elements.numberPad.style.display = 'none';
+
+    // Create or show button in feedback area
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'btn btn-primary';
+    nextBtn.style.margin = '20px auto';
+    nextBtn.style.display = 'block';
+    nextBtn.style.fontSize = '1.2rem';
+    nextBtn.textContent = '⚽ Next Kick';
+
+    nextBtn.onclick = function () {
+        nextBtn.remove();
+        // Restore input visibility happens in showQuestion() calling handleTypedAnswer/showKeyboard
+        showPenaltyQuestion();
+    };
+
+    // Clear feedback content and append button
+    elements.feedback.innerHTML = '';
+    elements.feedback.appendChild(nextBtn);
+    elements.feedback.classList.add('show');
+}
+
+function endPenaltyShootout() {
+    // Ensure timer is dead
+    if (wcState.penaltyTimerId) {
+        clearInterval(wcState.penaltyTimerId);
+        wcState.penaltyTimerId = null;
+    }
+
+    gameState.isPlaying = false;
+    elements.wcPenaltyOverlay.style.display = 'none';
+
+    const won = wcState.penaltyScore >= CONFIG.worldCup.penalty.requiredCorrect;
+    const round = CONFIG.worldCup.rounds[wcState.currentRound];
+    const opponent = wcState.opponents[wcState.currentRound];
+
+    elements.wcResultPlayer.textContent = `${wcState.playerCountry.emoji} ${wcState.playerCountry.name}`;
+    elements.wcResultOpponent.textContent = `${opponent.name} ${opponent.emoji}`;
+    elements.wcResultScore.textContent = `${wcState.penaltyScore}`;
+    elements.wcResultTarget.textContent = `${CONFIG.worldCup.penalty.requiredCorrect}`;
+
+    if (won) {
+        elements.wcResultTitle.textContent = `\u2705 Penalty Win!`;
+        elements.wcResultMessage.textContent = `You scored ${wcState.penaltyScore}/${CONFIG.worldCup.penalty.questions} penalties!`;
+        elements.wcResultContinue.textContent = 'Continue \u2192';
+        elements.wcResultContinue.onclick = () => {
+            awardRoundCards();
+            advanceWCRound();
+        };
+    } else {
+        elements.wcResultTitle.textContent = `\u274c Penalty Heartbreak`;
+        elements.wcResultMessage.textContent = `You scored ${wcState.penaltyScore}/${CONFIG.worldCup.penalty.questions}. Needed ${CONFIG.worldCup.penalty.requiredCorrect}.`;
+        elements.wcResultContinue.textContent = 'View Results';
+        elements.wcResultContinue.onclick = () => showWCEliminated();
+    }
+
+    displayWCResultCards(elements.wcResultCards, wcState.wcCards);
+    showScreen('wc-round-result');
+}
+
+// ----------------------------------------
+// WORLD CUP FINAL SCREENS
+// ----------------------------------------
+
+function showWCChampion() {
+    // Award champion cards
+    const championCard = {
+        name: 'WC Champion',
+        fullName: `${wcState.playerCountry.name} World Cup Champion`,
+        team: wcState.playerCountry.name,
+        emoji: '\ud83c\udfc6',
+        rarity: 3,
+        stats: { PAC: 95, SHO: 95, PAS: 95, DRI: 95, DEF: 85, PHY: 90 }
+    };
+    wcState.wcCards.push(championCard);
+    gameState.collectedCards.push(championCard);
+
+    // Award 3 mythical or godly cards
+    const highTierCards = [
+        ...CONFIG.characterCards.mythical,
+        ...CONFIG.characterCards.godly
+    ];
+    for (let i = 0; i < 3; i++) {
+        const card = { ...highTierCards[Math.floor(Math.random() * highTierCards.length)] };
+        wcState.wcCards.push(card);
+        gameState.collectedCards.push(card);
+    }
+
+    // Save cards
+    saveCollectedCards();
+
+    // Populate champion screen
+    elements.wcFinalIcon.textContent = '\ud83c\udfc6';
+    elements.wcFinalTitle.textContent = 'World Cup Champion!';
+    elements.wcFinalCountry.textContent = `${wcState.playerCountry.emoji} ${wcState.playerCountry.name}`;
+    elements.wcFinalStats.innerHTML = `
+        <div class="wc-stat"><span class="stat-icon">\u26bd</span> <strong>${wcState.totalGoals}</strong> Total Goals</div>
+        <div class="wc-stat"><span class="stat-icon">\ud83c\udfaf</span> <strong>${wcState.totalQuestions}</strong> Questions</div>
+        <div class="wc-stat"><span class="stat-icon">\ud83e\udde4</span> <strong>${wcState.cleanSheetRounds.length}</strong> Clean Sheets</div>
+    `;
+
+    displayWCResultCards(elements.wcFinalCards, wcState.wcCards);
+    showScreen('wc-final-screen');
+}
+
+function showWCEliminated() {
+    const round = CONFIG.worldCup.rounds[wcState.currentRound];
+
+    // Save any cards earned so far
+    saveCollectedCards();
+
+    elements.wcFinalIcon.textContent = '\ud83d\ude14';
+    elements.wcFinalTitle.textContent = 'Eliminated';
+    elements.wcFinalCountry.textContent = `${wcState.playerCountry.emoji} ${wcState.playerCountry.name}`;
+    elements.wcFinalStats.innerHTML = `
+        <div class="wc-stat"><span>Eliminated in the </span><strong>${round.name}</strong></div>
+        <div class="wc-stat"><span class="stat-icon">\u26bd</span> <strong>${wcState.totalGoals}</strong> Total Goals</div>
+        <div class="wc-stat"><span class="stat-icon">\ud83c\udfaf</span> <strong>${wcState.totalQuestions}</strong> Questions</div>
+    `;
+
+    displayWCResultCards(elements.wcFinalCards, wcState.wcCards);
+    showScreen('wc-final-screen');
+}
+
+/**
+ * Display earned cards in a WC result container
+ */
+function displayWCResultCards(container, cards) {
+    container.innerHTML = '';
+    if (cards.length === 0) return;
+
+    const title = document.createElement('h3');
+    title.textContent = '\ud83c\udccf Cards Earned';
+    title.className = 'wc-cards-title';
+    container.appendChild(title);
+
+    cards.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.className = `wc-card-item rarity-${card.rarity}`;
+        cardEl.innerHTML = `<span class="wc-card-emoji">${card.emoji}</span><span class="wc-card-name">${card.name}</span>`;
+        container.appendChild(cardEl);
+    });
 }
 
 // ========================================
@@ -2043,6 +2710,20 @@ function initEventListeners() {
     // Gallery buttons
     elements.viewCardsBtn.addEventListener('click', showGalleryScreen);
     elements.galleryHomeBtn.addEventListener('click', goHome);
+
+    // World Cup buttons
+    if (elements.countryBackBtn) {
+        elements.countryBackBtn.addEventListener('click', goHome);
+    }
+    if (elements.wcPlayAgainBtn) {
+        elements.wcPlayAgainBtn.addEventListener('click', () => {
+            gameState.gameMode = 'worldcup';
+            startWorldCup();
+        });
+    }
+    if (elements.wcHomeBtn) {
+        elements.wcHomeBtn.addEventListener('click', goHome);
+    }
 }
 
 // ========================================

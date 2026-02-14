@@ -55,9 +55,10 @@
 
                 <div class="mode-group">
                     <label class="mode-label">Game Mode</label>
-                    <div class="toggle-buttons" id="game-mode-toggle">
+                    <div class="toggle-buttons triple" id="game-mode-toggle">
                         <button class="toggle-btn active" data-value="practice">🎯 Practice</button>
                         <button class="toggle-btn" data-value="tournament">🏆 Tournament</button>
+                        <button class="toggle-btn" data-value="worldcup">🌍 World Cup</button>
                     </div>
                     <span class="mode-hint" id="game-mode-hint">Multiple choice • No timer</span>
                 </div>
@@ -77,6 +78,18 @@
                     Settings
                 </button>
             </div>
+        </div>
+
+        <!-- Country Selection Screen (World Cup) -->
+        <div id="country-select-screen" class="screen">
+            <div class="country-select-header">
+                <h2>🌍 Choose Your Country</h2>
+                <p class="country-select-sub">Represent your nation in the World Cup!</p>
+            </div>
+            <div class="country-grid" id="country-grid">
+                <!-- Countries populated by JS -->
+            </div>
+            <button id="country-back-btn" class="btn btn-secondary">← Back</button>
         </div>
 
         <!-- Game Screen -->
@@ -103,6 +116,29 @@
                     <span class="label">STREAK</span>
                     <span id="streak" class="value">0</span>
                     <span class="streak-fire" id="streak-fire">🔥</span>
+                </div>
+            </div>
+
+            <!-- World Cup Match Banner (hidden by default) -->
+            <div id="wc-match-banner" class="wc-match-banner" style="display: none;">
+                <span class="wc-round-name" id="wc-round-name">Round of 16</span>
+                <div class="wc-matchup">
+                    <span class="wc-team wc-player-team">
+                        <span id="wc-player-flag" class="wc-flag">🇧🇷</span>
+                        <span id="wc-player-name" class="wc-team-name">Brazil</span>
+                    </span>
+                    <span class="wc-vs">vs</span>
+                    <span class="wc-team wc-opponent-team">
+                        <span id="wc-opponent-name" class="wc-team-name">Germany</span>
+                        <span id="wc-opponent-flag" class="wc-flag">🇩🇪</span>
+                    </span>
+                </div>
+                <div class="wc-progress">
+                    <span id="wc-score-display" class="wc-score-display">Goals: 0</span>
+                    <span class="wc-divider">•</span>
+                    <span id="wc-question-counter" class="wc-question-counter">Q 1/10</span>
+                    <span class="wc-divider">•</span>
+                    <span id="wc-target-display" class="wc-target-display">Need: 7</span>
                 </div>
             </div>
 
@@ -238,6 +274,56 @@
             </div>
         </div>
 
+        <!-- World Cup Round Result Screen -->
+        <div id="wc-round-result" class="screen">
+            <div class="wc-result-content">
+                <h2 id="wc-result-title" class="wc-result-title">Match Result</h2>
+                <div class="wc-result-matchup">
+                    <span id="wc-result-player" class="wc-result-team">🇧🇷 Brazil</span>
+                    <span id="wc-result-score" class="wc-result-score">7</span>
+                    <span class="wc-result-vs">-</span>
+                    <span id="wc-result-target" class="wc-result-score">7</span>
+                    <span id="wc-result-opponent" class="wc-result-team">Germany 🇩🇪</span>
+                </div>
+                <p id="wc-result-message" class="wc-result-message">You advance!</p>
+                <div id="wc-result-cards" class="wc-result-cards"></div>
+                <button id="wc-result-continue" class="btn btn-primary">Continue →</button>
+            </div>
+        </div>
+
+        <!-- Penalty Shootout Overlay -->
+        <div id="wc-penalty-overlay" class="wc-penalty-overlay" style="display: none;">
+            <div class="wc-penalty-content">
+                <h2 class="wc-penalty-title">⚽ PENALTY SHOOTOUT! ⚽</h2>
+                <div class="wc-penalty-progress">
+                    <span id="wc-penalty-score">Goals: 0/5</span>
+                    <span class="wc-penalty-timer-label">Time:</span>
+                    <span id="wc-penalty-timer" class="wc-penalty-timer">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- World Cup Final Screen (Champion / Eliminated) -->
+        <div id="wc-final-screen" class="screen">
+            <div class="wc-final-content">
+                <div id="wc-final-icon" class="wc-final-icon">🏆</div>
+                <h2 id="wc-final-title" class="wc-final-title">World Cup Champion!</h2>
+                <p id="wc-final-country" class="wc-final-country">🇧🇷 Brazil</p>
+                <div id="wc-final-stats" class="wc-final-stats"></div>
+                <div id="wc-final-cards" class="wc-final-cards"></div>
+                <div class="game-over-actions">
+                    <button id="wc-play-again-btn" class="btn btn-primary">
+                        <span class="btn-icon">🔄</span>
+                        Play Again
+                    </button>
+                    <button id="wc-home-btn" class="btn btn-secondary">
+                        <span class="btn-icon">🏠</span>
+                        Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- My Cards Gallery Screen -->
         <div id="gallery-screen" class="screen">
             <div class="gallery-header">
@@ -343,7 +429,7 @@
             </div>
 
             <div class="about-section">
-                <p class="version">Version 1.2.0</p>
+                <p class="version">Version 1.2.1</p>
                 <p class="license">Released under <a href="https://github.com/edgevolt/soccer-math" target="_blank">MIT
                         License</a></p>
                 <p class="credits">Music: <a href="https://www.unminus.com/" target="_blank">Unminus</a></p>

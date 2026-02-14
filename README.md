@@ -6,7 +6,8 @@ A fun and engaging math game designed for 4th graders that combines the exciteme
 
 ### Game Modes
 - **🏆 Tournament Mode**: Type answers as fast as you can in a 10-minute timed challenge
-- **🎯 Practice Mode**: Take your time with multiple-choice questions (no timer)
+- **� World Cup Mode**: Represent your country in a 4-round tournament with increasing difficulty and dramatic penalty shootouts!
+- **�🎯 Practice Mode**: Take your time with multiple-choice questions (no timer)
 
 ### Operations
 - **Multiplication (×)**: Practice multiplication tables from 1-12
@@ -65,13 +66,14 @@ http://localhost:8000
 1. **Choose Your Settings**:
    - Select an operation (Multiplication, Division, or Fractions)
    - Pick your starting level (1, 2, or 3)
-   - Choose a game mode (Practice or Tournament)
+   - Choose a game mode (Practice, Tournament, or World Cup)
 
 2. **Kick Off**:
    - Click the "Kick Off!" button to start the game
 
 3. **Solve Problems**:
    - In Tournament mode: Type your answer and press "Kick!" or hit Enter
+   - In World Cup mode: Solve math problems to score goals and win the tournament!
    - In Practice mode: Click the correct answer from 4 choices
 
 4. **Score Goals**:

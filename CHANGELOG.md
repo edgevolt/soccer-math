@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-02-13
+
+### Changed
+- **World Cup Pacing**: Reduced penalty shootout timer to 6 seconds and added a "Next Kick" acknowledgement step to prevent rapid-fire confusion.
+- **World Cup Difficulty**: Implemented static difficulty tiers for tournament stages (Group: L1, Ro16/QF: L2, Semi/Final: L3).
+- **World Cup Logic**: Fixed an issue where the user's global starting level setting would override the tournament round difficulty, causing immediate level jumps.
+
 ## [1.2.0] - 2026-02-13
 
 ### Added
