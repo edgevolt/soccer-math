@@ -1502,6 +1502,40 @@ body::before {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Fraction Display (stacked numerator / denominator) */
+.fraction {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.frac-num {
+    border-bottom: 3px solid currentColor;
+    padding: 0 6px 3px;
+    font-weight: 800;
+}
+
+.frac-den {
+    padding: 3px 6px 0;
+    font-weight: 800;
+}
+
+/* Fractions inside answer buttons */
+.answer-btn .fraction {
+    font-size: 1.4rem;
+}
+
+.answer-btn .frac-num {
+    border-bottom-width: 2px;
+    padding: 0 4px 2px;
+}
+
+.answer-btn .frac-den {
+    padding: 2px 4px 0;
+}
+
 /* Question Card */
 .question-card {
     position: absolute;
@@ -2209,6 +2243,11 @@ body::before {
 
     .question-content .question-mark {
         font-size: 1.8rem;
+    }
+
+    /* Fractions in landscape */
+    .answer-btn .fraction {
+        font-size: 1.1rem;
     }
 
     /* Answer buttons (Practice mode) */

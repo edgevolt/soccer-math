@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-02-13
+
+### Added
+- **Equivalent Fractions Mode**: New operation type alongside Multiply and Divide. Players identify equivalent fractions in both Practice (multiple-choice with stacked fraction buttons) and Tournament (type the missing numerator) modes.
+- **Fraction Difficulty Levels**: Three progressive levels — simple fractions (halves, thirds, fourths), medium (fifths, sixths, eighths), and advanced (sevenths, ninths, twelfths).
+- **Stacked Fraction Display**: Fractions render as proper stacked notation (numerator over denominator with a fraction bar).
+- **Music Playlist**: Background music now cycles through 3 tracks instead of looping a single song, starting at a random track each session.
+
+### Changed
+- **Wrong Answer Delay**: Increased the pause after an incorrect answer from 2 seconds to 3.5 seconds so students have more time to review the correct answer.
+- **Music Credits**: Updated credits to reference Unminus as the music source.
+
+### Fixed
+- **Duplicate Character Cards**: Removed characters that appeared in multiple rarity tiers. Each player now exists in exactly one rarity level.
+
 ## [1.1.2] - 2026-02-11
 
 ### Added

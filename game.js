@@ -22,6 +22,13 @@ const CONFIG = {
         3: { name: 'Level 3', tables: [7, 8, 9, 11, 12], minCorrect: 12 }
     },
 
+    // Fraction levels for equivalent fractions mode
+    fractionLevels: {
+        1: { name: 'Level 1', baseFractions: [[1, 2], [1, 3], [2, 3], [1, 4], [3, 4]], multiplierRange: [2, 4], minCorrect: 0 },
+        2: { name: 'Level 2', baseFractions: [[1, 5], [2, 5], [3, 5], [1, 6], [5, 6], [1, 8], [3, 8]], multiplierRange: [2, 6], minCorrect: 5 },
+        3: { name: 'Level 3', baseFractions: [[1, 7], [2, 7], [1, 9], [2, 9], [1, 10], [3, 10], [1, 12], [5, 12]], multiplierRange: [2, 8], minCorrect: 12 }
+    },
+
     // Character cards for lucky block rewards
     characterCards: {
         common: [
@@ -111,22 +118,6 @@ const CONFIG = {
             { name: 'Morgan', fullName: 'Alex Morgan', team: 'San Diego Wave', emoji: '🇺🇸', rarity: 2, stats: { PAC: 83, SHO: 87, PAS: 76, DRI: 82, DEF: 40, PHY: 72 } }
         ],
         legendary: [
-            { name: 'Pele', fullName: 'Pelé', team: 'Santos FC', emoji: '🇧🇷', rarity: 3, stats: { PAC: 95, SHO: 96, PAS: 93, DRI: 96, DEF: 50, PHY: 76 } },
-            { name: 'Maradona', fullName: 'Diego Maradona', team: 'Napoli', emoji: '🇦🇷', rarity: 3, stats: { PAC: 90, SHO: 94, PAS: 95, DRI: 98, DEF: 40, PHY: 75 } },
-            { name: 'Messi', fullName: 'Lionel Messi', team: 'Inter Miami', emoji: '🇦🇷', rarity: 3, stats: { PAC: 80, SHO: 88, PAS: 92, DRI: 96, DEF: 34, PHY: 60 } },
-            { name: 'Ronaldo', fullName: 'Cristiano Ronaldo', team: 'Al Nassr', emoji: '🇵🇹', rarity: 3, stats: { PAC: 83, SHO: 92, PAS: 78, DRI: 85, DEF: 34, PHY: 75 } },
-            { name: 'Zidane', fullName: 'Zinedine Zidane', team: 'Real Madrid', emoji: '🇫🇷', rarity: 3, stats: { PAC: 82, SHO: 89, PAS: 96, DRI: 95, DEF: 70, PHY: 81 } },
-            { name: 'Cruyff', fullName: 'Johan Cruyff', team: 'Ajax', emoji: '🇳🇱', rarity: 3, stats: { PAC: 91, SHO: 92, PAS: 93, DRI: 98, DEF: 42, PHY: 70 } },
-            { name: 'R9', fullName: 'Ronaldo Nazário', team: 'Inter Milan', emoji: '🇧🇷', rarity: 3, stats: { PAC: 97, SHO: 95, PAS: 81, DRI: 95, DEF: 35, PHY: 76 } },
-            { name: 'Ronaldinho', fullName: 'Ronaldinho', team: 'FC Barcelona', emoji: '🇧🇷', rarity: 3, stats: { PAC: 91, SHO: 90, PAS: 90, DRI: 98, DEF: 35, PHY: 78 } },
-            { name: 'Maldini', fullName: 'Paolo Maldini', team: 'AC Milan', emoji: '🇮🇹', rarity: 3, stats: { PAC: 86, SHO: 55, PAS: 75, DRI: 70, DEF: 96, PHY: 85 } },
-            { name: 'Beckenbauer', fullName: 'Franz Beckenbauer', team: 'Bayern Munich', emoji: '🇩🇪', rarity: 3, stats: { PAC: 82, SHO: 70, PAS: 90, DRI: 88, DEF: 94, PHY: 80 } },
-            { name: 'Yashin', fullName: 'Lev Yashin', team: 'Dynamo Moscow', emoji: '🇷🇺', rarity: 3, stats: { PAC: 65, SHO: 40, PAS: 75, DRI: 70, DEF: 95, PHY: 88 } },
-            { name: 'Platini', fullName: 'Michel Platini', team: 'Juventus', emoji: '🇫🇷', rarity: 3, stats: { PAC: 84, SHO: 90, PAS: 94, DRI: 92, DEF: 55, PHY: 72 } },
-            { name: 'Best', fullName: 'George Best', team: 'Manchester United', emoji: '🇬🇧', rarity: 3, stats: { PAC: 93, SHO: 91, PAS: 86, DRI: 95, DEF: 45, PHY: 70 } },
-            { name: 'Van Basten', fullName: 'Marco van Basten', team: 'AC Milan', emoji: '🇳🇱', rarity: 3, stats: { PAC: 86, SHO: 94, PAS: 78, DRI: 88, DEF: 40, PHY: 80 } },
-            { name: 'Puskas', fullName: 'Ferenc Puskás', team: 'Real Madrid', emoji: '🇭🇺', rarity: 3, stats: { PAC: 85, SHO: 96, PAS: 90, DRI: 91, DEF: 40, PHY: 75 } },
-            { name: 'Henry', fullName: 'Thierry Henry', team: 'Arsenal', emoji: '🇫🇷', rarity: 3, stats: { PAC: 94, SHO: 93, PAS: 83, DRI: 90, DEF: 53, PHY: 80 } },
             { name: 'Garrincha', fullName: 'Garrincha', team: 'Botafogo', emoji: '🇧🇷', rarity: 3, stats: { PAC: 94, SHO: 85, PAS: 88, DRI: 98, DEF: 35, PHY: 68 } },
             { name: 'Zico', fullName: 'Zico', team: 'Flamengo', emoji: '🇧🇷', rarity: 3, stats: { PAC: 85, SHO: 91, PAS: 95, DRI: 92, DEF: 55, PHY: 70 } },
             { name: 'Iniesta', fullName: 'Andrés Iniesta', team: 'FC Barcelona', emoji: '🇪🇸', rarity: 3, stats: { PAC: 78, SHO: 76, PAS: 96, DRI: 96, DEF: 65, PHY: 60 } },
@@ -880,10 +871,16 @@ function getRandomMissedQuestion() {
 // MUSIC CONTROLS
 // ========================================
 
+const BGM_TRACKS = ['bgm-1.mp3', 'bgm-2.mp3', 'bgm-3.mp3'];
+let currentTrackIndex = 0;
+
 function initMusic() {
     // Always start muted to comply with browser autoplay policies
     // and ensure UI matches reality (no sound without interaction)
     gameState.isMusicPlaying = false;
+
+    // Pick a random starting track
+    currentTrackIndex = Math.floor(Math.random() * BGM_TRACKS.length);
 
     // Set initial button state
     updateMusicButtonState();
@@ -893,6 +890,28 @@ function initMusic() {
     musicBtns.forEach(btn => {
         btn.addEventListener('click', toggleMusic);
     });
+
+    // When a track ends, play the next one
+    if (elements.bgmAudio) {
+        elements.bgmAudio.addEventListener('ended', playNextTrack);
+    }
+}
+
+function loadTrack(index) {
+    if (elements.bgmAudio) {
+        elements.bgmAudio.src = BGM_TRACKS[index];
+        elements.bgmAudio.load();
+    }
+}
+
+function playNextTrack() {
+    currentTrackIndex = (currentTrackIndex + 1) % BGM_TRACKS.length;
+    loadTrack(currentTrackIndex);
+    if (gameState.isMusicPlaying && elements.bgmAudio) {
+        elements.bgmAudio.play().catch(e => {
+            console.log("Audio play failed:", e);
+        });
+    }
 }
 
 function toggleMusic() {
@@ -928,13 +947,10 @@ function updateMusicButtonState() {
 
 function playMusic() {
     if (elements.bgmAudio) {
-        elements.bgmAudio.volume = 0.5; // Set volume to 50%
+        loadTrack(currentTrackIndex);
+        elements.bgmAudio.volume = 0.5;
         elements.bgmAudio.play().catch(e => {
             console.log("Audio play failed (likely autoplay policy):", e);
-            // If play fails, we might want to reset state or just leave it
-            // User usually has to interact first. 
-            // Since we toggled via button click, it should work.
-            // On page load, it might fail.
         });
     }
 }
@@ -983,9 +999,11 @@ function updateLevel() {
     // Calculate what level should be based on correct answers
     let newLevel = gameState.startingLevel; // Never go below starting level
 
-    if (gameState.correctAnswers >= CONFIG.levels[3].minCorrect) {
+    const levelConfig = gameState.operationType === 'fractions' ? CONFIG.fractionLevels : CONFIG.levels;
+
+    if (gameState.correctAnswers >= levelConfig[3].minCorrect) {
         newLevel = 3;
-    } else if (gameState.correctAnswers >= CONFIG.levels[2].minCorrect) {
+    } else if (gameState.correctAnswers >= levelConfig[2].minCorrect) {
         newLevel = Math.max(2, gameState.startingLevel);
     }
 
@@ -1003,7 +1021,7 @@ function updateLevel() {
         gameState.currentLevel = newLevel;
 
         // Update UI
-        elements.levelText.textContent = CONFIG.levels[newLevel].name;
+        elements.levelText.textContent = levelConfig[newLevel].name;
         elements.levelDots.forEach((dot, index) => {
             dot.classList.toggle('active', index < newLevel);
         });
@@ -1112,6 +1130,11 @@ function generateDivisionQuestion() {
  * Uses adaptive learning to prioritize missed questions
  */
 function generateQuestion() {
+    // Fractions mode has its own flow (no adaptive learning for now)
+    if (gameState.operationType === 'fractions') {
+        return generateFractionsQuestion();
+    }
+
     // Check if we should show a missed question (50% chance)
     const missedQuestion = getRandomMissedQuestion();
 
@@ -1234,6 +1257,94 @@ function generateDivisionDistractors(correct, dividend, divisor) {
     return Array.from(distractors).slice(0, 3);
 }
 
+/**
+ * Generate an equivalent fractions question based on current level.
+ * Practice mode: show fraction, pick the equivalent from 4 choices (all fraction strings).
+ * Tournament mode: show "baseNum/baseDen = ?/targetDen", answer is the missing numerator (integer).
+ */
+function generateFractionsQuestion() {
+    const levelConfig = CONFIG.fractionLevels[gameState.currentLevel];
+    const baseFractions = levelConfig.baseFractions;
+    const [minMult, maxMult] = levelConfig.multiplierRange;
+
+    // Pick a random base fraction [numerator, denominator]
+    const [baseNum, baseDen] = randomChoice(baseFractions);
+
+    // Pick a random multiplier to create the equivalent fraction
+    const multiplier = randomInt(minMult, maxMult);
+    const equivNum = baseNum * multiplier;
+    const equivDen = baseDen * multiplier;
+
+    if (gameState.inputMode === 'choice') {
+        // Practice mode: answer choices are fraction strings
+        const correctAnswer = `${equivNum}/${equivDen}`;
+        const distractors = generateFractionsDistractors(equivNum, equivDen, baseNum, baseDen);
+        const answers = shuffleArray([correctAnswer, ...distractors]);
+
+        return {
+            num1: `${baseNum}/${baseDen}`,
+            num2: '',
+            operator: '=',
+            correctAnswer,
+            answers,
+            isFractions: true
+        };
+    } else {
+        // Tournament mode: answer is the missing numerator (integer)
+        return {
+            num1: `${baseNum}/${baseDen}`,
+            num2: equivDen,
+            operator: '= ?/',
+            correctAnswer: equivNum,
+            answers: [],
+            isFractions: true
+        };
+    }
+}
+
+/**
+ * Generate 3 plausible wrong fraction strings for practice mode.
+ * Uses the same denominator as the correct answer but wrong numerators.
+ */
+function generateFractionsDistractors(correctNum, correctDen, baseNum, baseDen) {
+    const distractors = new Set();
+
+    // Generate wrong numerators using the same denominator
+    const patterns = [
+        correctNum + 1,
+        correctNum - 1,
+        correctNum + 2,
+        correctNum - 2,
+        correctNum + baseDen,
+        correctNum - baseDen,
+        correctNum * 2,
+        Math.floor(correctNum / 2),
+        baseNum + 1,
+        baseDen
+    ];
+
+    for (const wrongNum of patterns) {
+        if (wrongNum > 0 && wrongNum !== correctNum && !distractors.has(wrongNum)) {
+            // Make sure it's not actually equivalent to the base fraction
+            if (wrongNum / correctDen !== baseNum / baseDen) {
+                distractors.add(`${wrongNum}/${correctDen}`);
+                if (distractors.size >= 3) break;
+            }
+        }
+    }
+
+    // Fallback: random wrong numerators
+    while (distractors.size < 3) {
+        const wrongNum = randomInt(1, correctDen - 1);
+        const fracStr = `${wrongNum}/${correctDen}`;
+        if (wrongNum !== correctNum && !distractors.has(fracStr) && wrongNum / correctDen !== baseNum / baseDen) {
+            distractors.add(fracStr);
+        }
+    }
+
+    return Array.from(distractors).slice(0, 3);
+}
+
 
 /**
  * Display a new question
@@ -1243,10 +1354,39 @@ function showQuestion() {
     gameState.currentAttempts = 0; // Reset attempts for new question
     const q = gameState.currentQuestion;
 
-    // Update question display
-    elements.num1.textContent = q.num1;
-    elements.num2.textContent = q.num2;
-    elements.operator.textContent = q.operator;
+    // Handle fraction display
+    const equalsEl = document.querySelector('.question-content .equals');
+    const questionMarkEl = document.querySelector('.question-content .question-mark');
+
+    if (q.isFractions) {
+        // Hide the static = and ? since fractions mode handles its own layout
+        if (equalsEl) equalsEl.style.display = 'none';
+        if (questionMarkEl) questionMarkEl.style.display = 'none';
+
+        // Render base fraction as stacked fraction HTML
+        elements.num1.innerHTML = renderFractionHTML(q.num1);
+
+        if (gameState.inputMode === 'choice') {
+            // Practice: "1/2 = ?"
+            elements.operator.textContent = '=';
+            elements.num2.textContent = '?';
+        } else {
+            // Tournament: "1/2 = ?/den"
+            elements.operator.textContent = '=';
+            elements.num2.innerHTML = renderFractionHTML(`?/${q.num2}`);
+        }
+    } else {
+        // Restore static elements for multiplication/division
+        if (equalsEl) equalsEl.style.display = '';
+        if (questionMarkEl) questionMarkEl.style.display = '';
+
+        // Standard multiplication/division display
+        elements.num1.innerHTML = '';
+        elements.num1.textContent = q.num1;
+        elements.num2.innerHTML = '';
+        elements.num2.textContent = q.num2;
+        elements.operator.textContent = q.operator;
+    }
 
     if (gameState.inputMode === 'choice') {
         // Multiple choice mode
@@ -1256,7 +1396,12 @@ function showQuestion() {
 
         // Update answer buttons
         elements.answerBtns.forEach((btn, index) => {
-            btn.textContent = q.answers[index];
+            if (q.isFractions) {
+                btn.innerHTML = renderFractionHTML(q.answers[index]);
+            } else {
+                btn.innerHTML = '';
+                btn.textContent = q.answers[index];
+            }
             btn.disabled = false;
             btn.classList.remove('correct', 'incorrect');
         });
@@ -1282,6 +1427,16 @@ function showQuestion() {
 
     // Reset feedback
     elements.feedback.classList.remove('show', 'goal', 'miss');
+}
+
+/**
+ * Render a fraction string (e.g. "3/6") as stacked HTML.
+ */
+function renderFractionHTML(fracStr) {
+    const str = String(fracStr);
+    if (!str.includes('/')) return str;
+    const [num, den] = str.split('/');
+    return `<span class="fraction"><span class="frac-num">${num}</span><span class="frac-den">${den}</span></span>`;
 }
 
 /**
@@ -1315,7 +1470,7 @@ function handleAnswer(selectedIndex) {
     // Show next question after delay (longer for incorrect so they can see the answer)
     // BUT skip if level-up or bonus will show an overlay (it will handle next question)
     if (!willShowOverlay) {
-        const delay = isCorrect ? 800 : 2000;
+        const delay = isCorrect ? 800 : 3500;
         setTimeout(() => {
             if (gameState.isPlaying) {
                 showQuestion();
@@ -1361,7 +1516,7 @@ function handleTypedAnswer() {
     // Show next question after delay (longer for incorrect so they can see the answer)
     // BUT skip if level-up or bonus will show an overlay (it will handle next question)
     if (!willShowOverlay) {
-        const delay = isCorrect ? 800 : 2000;
+        const delay = isCorrect ? 800 : 3500;
         setTimeout(() => {
             if (gameState.isPlaying) {
                 showQuestion();
@@ -1532,7 +1687,7 @@ function handleIncorrectTypedAnswer() {
 
     // Input feedback - show correct answer
     elements.answerInput.classList.add('incorrect');
-    elements.answerInput.value = gameState.currentQuestion.correctAnswer;
+    elements.answerInput.value = q.correctAnswer;
 
     // Ball animation
     elements.ball.classList.remove('kick', 'miss');
@@ -1676,7 +1831,8 @@ function startGame() {
     elements.scoreDisplay.textContent = '0';
     elements.streakDisplay.textContent = '0';
     elements.streakFire.classList.remove('active');
-    elements.levelText.textContent = CONFIG.levels[gameState.startingLevel].name;
+    const startLevelConfig = gameState.operationType === 'fractions' ? CONFIG.fractionLevels : CONFIG.levels;
+    elements.levelText.textContent = startLevelConfig[gameState.startingLevel].name;
     elements.levelDots.forEach((dot, index) => {
         dot.classList.toggle('active', index < gameState.startingLevel);
     });

@@ -1,6 +1,6 @@
 # ⚽ Soccer Math
 
-A fun and engaging math game designed for 4th graders that combines the excitement of soccer with multiplication and division practice. Score goals by solving math problems correctly!
+A fun and engaging math game designed for 4th graders that combines the excitement of soccer with multiplication, division, and equivalent fractions practice. Score goals by solving math problems correctly!
 
 ## 🎮 Features
 
@@ -11,6 +11,7 @@ A fun and engaging math game designed for 4th graders that combines the exciteme
 ### Operations
 - **Multiplication (×)**: Practice multiplication tables from 1-12
 - **Division (÷)**: Master division with whole number answers
+- **Equivalent Fractions (⅗)**: Identify equivalent fractions with progressive difficulty
 
 ### Progressive Difficulty
 - **Level 1**: ×1, ×2, ×5, ×10 (foundation tables)
@@ -62,7 +63,7 @@ http://localhost:8000
 ## 🎯 How to Play
 
 1. **Choose Your Settings**:
-   - Select an operation (Multiplication or Division)
+   - Select an operation (Multiplication, Division, or Fractions)
    - Pick your starting level (1, 2, or 3)
    - Choose a game mode (Practice or Tournament)
 
@@ -109,6 +110,7 @@ soccer-math/
 This game helps 4th graders:
 - Master multiplication tables (×1 through ×12)
 - Develop division skills with whole numbers
+- Understand equivalent fractions through visual practice
 - Improve mental math speed and accuracy
 - Build confidence through progressive difficulty
 - Stay engaged with game-based learning
